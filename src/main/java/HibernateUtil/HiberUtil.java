@@ -1,8 +1,7 @@
 package HibernateUtil;
-import QLHS.*;
+import Class.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-
 import org.hibernate.cfg.Configuration;
 /*
  *QLHS
@@ -13,14 +12,17 @@ import org.hibernate.cfg.Configuration;
 
  */
 public class HiberUtil {
-    public static SessionFactory sessionFactory = null;
+    public static Session session;
     static 
     {
-        Configuration con = new Configuration().configure().addAnnotatedClass(Sinhvien.class);
-        sessionFactory = con.buildSessionFactory();
+        Configuration con = new Configuration().configure().addAnnotatedClass(Sinhvien.class).
+                addAnnotatedClass(Lop.class).addAnnotatedClass(Mon.class).addAnnotatedClass(ThamgiaPK.class)
+                .addAnnotatedClass(Thamgia.class);
+        SessionFactory sessionFactory = con.buildSessionFactory();
+        session = sessionFactory.openSession();
     }
-    public static SessionFactory getSessionFactory()
+    public static Session getSession()
     {
-        return sessionFactory;
+        return session;
     }
 }

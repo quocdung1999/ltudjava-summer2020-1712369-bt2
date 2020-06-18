@@ -21,6 +21,5 @@
             123
         </property>
         <property name="hibernate.hbm2ddl.auto">update</property>
-        <mapping class="QLHS.Sinhvien"/>
     </session-factory>
 </hibernate-configuration>
