@@ -39,7 +39,19 @@ public class Sinhvien {
     {
         thamgia = new HashSet<Thamgia>();
     }
-    public Sinhvien(String maSV,Lop lop, Set<Thamgia> thamgia,String password,
+
+    public Sinhvien(String maSV,Lop lop , String password, boolean status, String hoTen,
+                    String gioiTinh, String cmnd) {
+        this.maSV = maSV;
+        this.lop = lop;
+        this.password = password;
+        this.status = status;
+        this.hoTen = hoTen;
+        this.gioiTinh = gioiTinh;
+        this.cmnd = cmnd;
+    }
+
+    public Sinhvien(String maSV, Lop lop, Set<Thamgia> thamgia, String password,
                     boolean status, String hoTen, String gioiTinh, String cmnd) {
         this.maSV = maSV;
         this.lop = lop;

@@ -51,6 +51,13 @@ public class Mon {
         this.phong = phong;
     }
 
+    public Mon(String maMon,Lop lopHoc, String tenMon, String phong) {
+        this.maMon = maMon;
+        this.lopHoc = lopHoc;
+        this.tenMon = tenMon;
+        this.phong = phong;
+    }
+
     public int getIDMon() {
         return IDMon;
     }

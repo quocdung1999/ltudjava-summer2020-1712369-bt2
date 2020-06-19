@@ -25,10 +25,14 @@ public class Lop {
     private Set<Sinhvien> dsSinhvien;
     public Lop() {
         dsMon = new HashSet<Mon>();
-        dsSinhvien = new HashSet<>();
+        dsSinhvien = new HashSet<Sinhvien>();
     }
 
-    public Lop(String maLop, Set<Mon> dsMon,Set<Sinhvien> dsSinhvien) {
+    public Lop(String maLop) {
+        this.maLop = maLop;
+    }
+
+    public Lop(String maLop, Set<Mon> dsMon, Set<Sinhvien> dsSinhvien) {
         this.maLop = maLop;
         this.dsMon = dsMon;
         this.dsSinhvien = dsSinhvien;

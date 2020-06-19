@@ -3,7 +3,10 @@ import HibernateUtil.*;
 import Class.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
+import java.util.Arrays;
+import java.util.List;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,30 +20,33 @@ public class Main
 {
     public static void main( String[] args )
     {
-        Lop l = new Lop();
+        /*
+        Lop l = new Lop("17CTT3");
         ThamgiaPK pk = new ThamgiaPK("1712369",1);
-        Thamgia t = new Thamgia();
-        Set<Thamgia> tg = new HashSet<Thamgia>();
-        Mon m = new Mon("CTT001",l,tg,"Nhập môn lập trình","F201");
-        Set<Mon> mon = new HashSet<Mon>();
-        mon.add(m);
-        tg.add(t);
-        Sinhvien s = new Sinhvien("1712369",l,tg,"123456",false,
+        Mon m = new Mon("CTT001",l,"Nhập môn lập trình","F201");
+        Sinhvien s = new Sinhvien("1712369",l,"123456",false,
                 "Phạm Quốc Dũng","Nam","0218373733");
-        Set<Sinhvien> sv = new HashSet<Sinhvien>();
-        sv.add(s);
-
-        t.setSv(s); t.setMon(m); t.setId(pk); t.setKhongHoc(false); t.setDuyet(true);
-        t.setDiemGK(new BigDecimal("7.5"));t.setDiemCK(new BigDecimal("7.5"));
-        t.setDiemKhac(new BigDecimal("0.5"));t.setDiemTong(new BigDecimal("7.5"));
-
-        l.setMaLop("17CTT3");l.setDsSinhvien(sv);l.setDsMon(mon);
+        Thamgia t = new Thamgia(pk,s,m,true,false,new BigDecimal("7.5"),
+                new BigDecimal("9.0"),new BigDecimal("0"),new BigDecimal("8.5"));
+    */
         Session session = HiberUtil.getSession();
         Transaction tx = session.beginTransaction();
-        session.save(l);
-        session.save(s);
+
+        Query query = session.createQuery("from Mon");
+        List<Mon> l = query.list();
+        for (Mon k : l)
+        {
+            Lop tg =k.getLopHoc();
+            System.out.println(tg.getMaLop());
+        }
+
+
+        /*session.save(l);
         session.save(m);
+        session.save(s);
         session.save(t);
+        */
         tx.commit();
+        session.close();
     }
 }
