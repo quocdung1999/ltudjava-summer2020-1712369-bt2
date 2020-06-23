@@ -20,10 +20,11 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import java.awt.Color;
+import javax.swing.JPasswordField;
 
 public class LoginGUI extends JFrame {
 	private JTextField usernameText;
-	private JTextField passwordText;
+	private JPasswordField passwordField;
 
 	/**
 	 * Launch the application.
@@ -33,6 +34,7 @@ public class LoginGUI extends JFrame {
 	 * Create the frame.
 	 */
 	public LoginGUI() {
+		setResizable(false);
 		getContentPane().setBackground(new Color(44, 62, 80));
 		setAlwaysOnTop(true);
 		setBackground(Color.LIGHT_GRAY);
@@ -72,13 +74,10 @@ public class LoginGUI extends JFrame {
 		passwordLabel.setForeground(new Color(228,241,254));
 		middlePanel.add(passwordLabel);
 		
-		passwordText = new JTextField();
-		passwordText.setFont(new Font("Times New Roman", Font.BOLD, 14));
-		passwordText.setToolTipText("Nhập mật khẩu tại đây");
-		passwordText.setColumns(10);
-		passwordText.setBounds(127, 77, 368, 34);
-		passwordText.setBackground(new Color(108,122,137));
-		middlePanel.add(passwordText);
+		passwordField = new JPasswordField();
+		passwordField.setBounds(127, 76, 368, 35);
+		passwordField.setBackground(new Color(108,122,137));
+		middlePanel.add(passwordField);
 		
 		JPanel headerPanel = new JPanel();
 		headerPanel.setBounds(55, 50, 540, 81);
@@ -108,7 +107,7 @@ public class LoginGUI extends JFrame {
 		
 		JPanel topPanel = new JPanel();
 		topPanel.setBackground(new Color(255, 140, 0));
-		topPanel.setBounds(0, 0, 634, 49);
+		topPanel.setBounds(0, 0, 644, 49);
 		getContentPane().add(topPanel);
 		topPanel.setLayout(null);
 		
