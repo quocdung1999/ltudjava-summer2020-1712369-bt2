@@ -21,6 +21,10 @@ import java.awt.Color;
 import javax.swing.JPasswordField;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class LoginGUI extends JFrame {
 	private JTextField usernameText;
@@ -129,19 +133,60 @@ public class LoginGUI extends JFrame {
 		
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String username = usernameText.getText();
-				String password = new String (passwordField.getPassword());
-				for (Giaovu gv : gvDao.layDanhSachGV())
+				checkIdentity(usernameText, passwordField);
+			}
+		});
+		usernameText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode()== KeyEvent.VK_ENTER)
 				{
-					if (gv.getUsername().compareTo(username)==0 && gv.getPassword().compareTo(password)==0)
-					{
-						dispose();
-						GiaovuGUI gvGUI = new GiaovuGUI(gv);
-					}
+					checkIdentity(usernameText, passwordField);
 				}
-				
 			}
 		});
 		
+		passwordField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode()== KeyEvent.VK_ENTER)
+				{
+					checkIdentity(usernameText, passwordField);
+				}
+			}
+		});
+	}
+	public void checkIdentity( JTextField usernameText, JPasswordField passwordField)
+	{
+		String username = usernameText.getText();
+		String password = new String (passwordField.getPassword());
+		boolean flag = false;
+		for (Sinhvien sv : svDao.layDanhSachSV())
+		{
+			if (sv.getMaSV().compareTo(username)==0 && sv.getPassword().compareTo(password)==0)
+			{
+				dispose();
+				SinhvienGUI svGUI = new SinhvienGUI(sv);
+				flag = true;
+				break;
+			}
+		}
+		if (!flag)
+		{
+			for (Giaovu gv : gvDao.layDanhSachGV())
+			{
+				if (gv.getUsername().compareTo(username)==0 && gv.getPassword().compareTo(password)==0)
+				{
+					dispose();
+					GiaovuGUI gvGUI = new GiaovuGUI(gv);
+					flag = true;
+					break;
+				}
+			}
+		}
+		if (!flag)
+		{
+			JOptionPane.showMessageDialog(usernameText, "Tài khoản hoặc mật khẩu không đúng! Vui lòng nhập lại!");
+		}
 	}
 }
