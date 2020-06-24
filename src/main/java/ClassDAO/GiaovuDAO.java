@@ -15,16 +15,12 @@ public class GiaovuDAO {
 	public GiaovuDAO()
 	{
 		gv = new ArrayList<Giaovu>();
-	}
-	public layDanhSachGV()
-	{
 		Session session = HiberUtil.getSession();
-        //Transaction tx = session.beginTransaction();
-
-        Query<Giaovu> query = session.createQuery("from Giaovu");
+        Query query = session.createQuery("from Giaovu");
         gv = query.list();
-        //tx.commit();
-        session.close();
+	}
+	public List<Giaovu> layDanhSachGV()
+	{
         return gv;
 	}
 }

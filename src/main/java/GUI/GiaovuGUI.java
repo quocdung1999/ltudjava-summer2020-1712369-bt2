@@ -1,6 +1,8 @@
 package GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 
@@ -10,31 +12,48 @@ import javax.swing.border.EmptyBorder;
 import java.awt.GridBagConstraints;
 import javax.swing.JTabbedPane;
 import java.awt.FlowLayout;
+import javax.swing.JLabel;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.RowSpec;
+
+import Class.Giaovu;
+
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.CardLayout;
+import javax.swing.SwingConstants;
+import java.awt.Font;
 
 
 public class GiaovuGUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public GiaovuGUI() {
+	public GiaovuGUI(Giaovu gv) {
 		setVisible(true);
-		setSize(527,387);
+		setSize(695,449);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 506, 378);
+		setSize(800,450);
 		setLocationRelativeTo(null);
-		getContentPane().setLayout(new BorderLayout(0, 0));
+		getContentPane().setLayout(null);
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		getContentPane().add(tabbedPane, BorderLayout.NORTH);
+		JPanel headerPanel = new JPanel();
+		headerPanel.setBounds(0, 0, 784, 36);
+		getContentPane().add(headerPanel);
+		headerPanel.setLayout(null);
 		
-		JPanel panel = new JPanel();
-		tabbedPane.addTab("New tab", null, panel, null);
+		String name = gv.getUsername();
+		JLabel welcomeLabel = new JLabel(name);
+		welcomeLabel.setBounds(655, 11, 119, 19);
+		headerPanel.add(welcomeLabel);
+		welcomeLabel.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+		welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_1, null);
 		
-		JPanel panel_2 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_2, null);
 	}
-
 }

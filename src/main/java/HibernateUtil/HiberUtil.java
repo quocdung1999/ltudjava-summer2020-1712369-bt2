@@ -17,7 +17,7 @@ public class HiberUtil {
     {
         Configuration con = new Configuration().configure().addAnnotatedClass(Sinhvien.class).
                 addAnnotatedClass(Lop.class).addAnnotatedClass(Mon.class).addAnnotatedClass(ThamgiaPK.class)
-                .addAnnotatedClass(Thamgia.class);
+                .addAnnotatedClass(Thamgia.class).addAnnotatedClass(Giaovu.class);
         SessionFactory sessionFactory = con.buildSessionFactory();
         session = sessionFactory.openSession();
     }

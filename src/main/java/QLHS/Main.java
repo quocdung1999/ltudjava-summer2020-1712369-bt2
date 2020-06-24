@@ -29,15 +29,15 @@ public class Main
         }
         */
         
-    	EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
+    	//EventQueue.invokeLater(new Runnable() {
+			//public void run() {
+				//try {
 					LoginGUI l = new LoginGUI();
 					l.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+				//} catch (Exception e) {
+					//e.printStackTrace();
+				//}
+			//}
+		//});
     }
 }

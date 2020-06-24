@@ -14,7 +14,7 @@ import javax.persistence.Table;
 
  */
 @Entity
-@Table(name = "tkgv" , schema = "quanlysinhvien ")
+@Table(name = "tkgv" , schema = "quanlysinhvien")
 public class Giaovu {
     @Id
     @Column(name = "username")
@@ -27,6 +27,7 @@ public class Giaovu {
     private boolean status;
 
     public Giaovu() {
+    	
     }
 
     public Giaovu(String username, String password, boolean status) {

@@ -10,29 +10,24 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.FormSpecs;
+
+import ClassDAO.*;
+import Class.*;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import java.awt.Color;
 import javax.swing.JPasswordField;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class LoginGUI extends JFrame {
 	private JTextField usernameText;
 	private JPasswordField passwordField;
-
-	/**
-	 * Launch the application.
-	 */
-
-	/**
-	 * Create the frame.
-	 */
+	private GiaovuDAO gvDao = new GiaovuDAO();
+	private SinhvienDAO svDao = new SinhvienDAO();
+	
 	public LoginGUI() {
 		setResizable(false);
 		getContentPane().setBackground(new Color(44, 62, 80));
@@ -58,6 +53,13 @@ public class LoginGUI extends JFrame {
 		middlePanel.add(usernameLabel);
 		
 		usernameText = new JTextField();
+		usernameText.setForeground(Color.WHITE);
+		usernameText.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				usernameText.setCaretColor(Color.WHITE);
+			}
+		});
 		usernameText.setFont(new Font("Times New Roman", Font.BOLD, 14));
 		usernameText.setToolTipText("Nhập tên tài khoản tại đây");
 		usernameText.setBounds(127, 21, 368, 34);
@@ -75,6 +77,13 @@ public class LoginGUI extends JFrame {
 		middlePanel.add(passwordLabel);
 		
 		passwordField = new JPasswordField();
+		passwordField.setForeground(Color.WHITE);
+		passwordField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				passwordField.setCaretColor(Color.WHITE);
+			}
+		});
 		passwordField.setBounds(127, 76, 368, 35);
 		passwordField.setBackground(new Color(108,122,137));
 		middlePanel.add(passwordField);
@@ -118,9 +127,18 @@ public class LoginGUI extends JFrame {
 		headerLabel.setFont(new Font("Consolas", Font.BOLD, 18));
 		topPanel.add(headerLabel);
 		
-		
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String username = usernameText.getText();
+				String password = new String (passwordField.getPassword());
+				for (Giaovu gv : gvDao.layDanhSachGV())
+				{
+					if (gv.getUsername().compareTo(username)==0 && gv.getPassword().compareTo(password)==0)
+					{
+						dispose();
+						GiaovuGUI gvGUI = new GiaovuGUI(gv);
+					}
+				}
 				
 			}
 		});
