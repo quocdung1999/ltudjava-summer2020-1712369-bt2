@@ -21,10 +21,9 @@ import javax.swing.JOptionPane;
  */
 public class SinhvienDAO {
     private List<Sinhvien> sv ;
-
+    private Session session = HiberUtil.getSession();
     public SinhvienDAO() {
         sv = new ArrayList<Sinhvien>();
-        Session session = HiberUtil.getSession();
         Query<Sinhvien> query = session.createQuery("from Sinhvien");
         sv = query.list();
     }
@@ -35,8 +34,7 @@ public class SinhvienDAO {
     }
     public boolean svHopLe(Sinhvien s)
     {
-        Session session = HiberUtil.getSession();
-
+        
         Query query = session.createQuery("from Sinhvien");
         sv = query.list();
         session.close();

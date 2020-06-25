@@ -12,10 +12,10 @@ import java.util.List;
 
 public class GiaovuDAO {
 	private List <Giaovu> gv;
+	private Session session = HiberUtil.getSession();
 	public GiaovuDAO()
 	{
 		gv = new ArrayList<Giaovu>();
-		Session session = HiberUtil.getSession();
         Query query = session.createQuery("from Giaovu");
         gv = query.list();
 	}

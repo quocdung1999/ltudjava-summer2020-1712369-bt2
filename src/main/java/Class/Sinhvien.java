@@ -125,4 +125,5 @@ public class Sinhvien {
     public void setCmnd(String cmnd) {
         this.cmnd = cmnd;
     }
+    
 }
