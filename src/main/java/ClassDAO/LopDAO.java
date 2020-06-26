@@ -23,8 +23,16 @@ public class LopDAO {
 	}
 	public List<Sinhvien> layDanhSachSinhvien(String maLop)
 	{
-		Query query = session.createQuery("from Sinhvien where Sinhvien.lop.maLop = :maLop");
-		List<Sinhvien> sv = query.list();
+		SinhvienDAO svDAO = new SinhvienDAO();
+		List<Sinhvien> sv = new ArrayList<Sinhvien>();
+		for (Sinhvien s:svDAO.layDanhSachSV())
+		{
+			if (s.getLop().getMaLop().compareTo(maLop)==0)
+			{
+				sv.add(s);
+			}
+
+		}
 		return sv;
 	}
 	

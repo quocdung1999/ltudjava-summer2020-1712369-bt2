@@ -45,9 +45,13 @@ public class SinhvienDAO {
         		return false;
         	}
         }
-        if (s.getPassword().length()>50||s.getHoTen().length()>50||
+        if (s.getMaSV().length()>8||s.getPassword().length()>50||s.getHoTen().length()>50||
         		s.getLop().getMaLop().length()>6||s.getCmnd().length()>12)
         	return false;
+        
+        if (s.getGioiTinh().compareTo("Nam")!=0 &&s.getGioiTinh().compareTo("Nữ")!=0)
+        	return false;
+        
         return true;
     }
     public void themSinhVien(Sinhvien s)
@@ -63,6 +67,5 @@ public class SinhvienDAO {
             tx.commit();
             session.close();
 		}
-    	
     }
 }
