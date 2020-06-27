@@ -1,11 +1,8 @@
 package GUI;
 
-import java.awt.BorderLayout;
+
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.GridBagLayout;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -17,23 +14,27 @@ import Class.*;
 import ClassDAO.*;
 
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+
+import com.google.protobuf.Timestamp;
 
 import java.awt.Font;
 import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
-import javax.swing.border.CompoundBorder;
 
 
 public class GiaovuGUI extends JFrame {
-	private JTable table;
 	private boolean flag = true;
-	private JTable table_1;
 	/**
 	 * Create the frame.
 	 */
@@ -43,7 +44,7 @@ public class GiaovuGUI extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 506, 378);
 		setSize(1200,700);
-		setTitle("Quản lý sinh viên");
+		setTitle("Phiên bản dành cho giáo vụ");
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
 		
@@ -87,15 +88,22 @@ public class GiaovuGUI extends JFrame {
 		JLabel lblNewLabel = new JLabel("Chọn lớp");
 		lblNewLabel.setForeground(Color.WHITE);
 		lblNewLabel.setFont(new Font("Times New Roman", Font.BOLD, 23));
-		lblNewLabel.setBounds(62, 42, 95, 30);
+		lblNewLabel.setBounds(67, 28, 95, 30);
 		dslopPanel.add(lblNewLabel);
 		
 		JPanel tablePanel = new JPanel();
 		tablePanel.setBackground(new Color(44,62,80));
-		tablePanel.setBounds(10, 99, 1175, 466);
+		tablePanel.setBounds(10, 131, 1175, 418);
 		dslopPanel.add(tablePanel);
 		tablePanel.setLayout(null);
 		
+		
+		JLabel titleLabel = new JLabel("");
+		titleLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
+		titleLabel.setForeground(Color.WHITE);
+		titleLabel.setBounds(424, 83, 357, 37);
+		titleLabel.setHorizontalAlignment(JLabel.CENTER);
+		dslopPanel.add(titleLabel);
 		
 		JComboBox<String> comboBox = new JComboBox<String>();
 		themLop(comboBox);
@@ -103,11 +111,14 @@ public class GiaovuGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				if (!flag)
+				{
 					tablePanel.removeAll();
+					tablePanel.setLayout(null);
+				}
 				DefaultTableModel model = new DefaultTableModel();
 				
 				model.addColumn("STT");model.addColumn("MSSV");model.addColumn("Họ và tên");
-				model.addColumn("Lớp");model.addColumn("Giới tính");model.addColumn("CMND");
+				model.addColumn("Giới tính");model.addColumn("CMND");
 				
 				String lopChon =(String) comboBox.getSelectedItem();
 				LopDAO l = new LopDAO();
@@ -115,16 +126,54 @@ public class GiaovuGUI extends JFrame {
 				int i = 1;
 				for (Sinhvien sv:s)
 				{
-					model.addRow(new Object[] {i,sv.getMaSV(),sv.getHoTen(),sv.getLop().getMaLop()
-							,sv.getGioiTinh(),sv.getCmnd()});
+					model.addRow(new Object[] {i,sv.getMaSV(),sv.getHoTen(),sv.getGioiTinh(),sv.getCmnd()});
 					i++;
 				}
+				if (s.size()>0)
+				{
+					JTable table = new JTable(model){
+				         public boolean editCellAt(int row, int column, java.util.EventObject e) {
+				             return false;
+				          }
+				         
+				         @Override
+				         public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+				             Component component = super.prepareRenderer(renderer, row, column);
+				             int rendererWidth = component.getPreferredSize().width;
+				             TableColumn tableColumn = getColumnModel().getColumn(column);
+				             tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width,
+				            		 tableColumn.getPreferredWidth()));
+				             return component;
+				          }
+					};
+					table.setForeground(Color.WHITE);
+					table.setBackground(new Color(44,62,80));
+					table.setFont(new Font("Times New Roman", Font.BOLD, 18));
+					table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+					JScrollPane scrollPane = new JScrollPane(table);
+					scrollPane.setViewportView(table);
+					tablePanel.add(scrollPane);
+					scrollPane.setBounds(40,25,1103,380);
+			
+					DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+					centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+					int column = table.getColumnModel().getColumnCount();
+					
+					for (int k=0;k<column;k++)
+					{
+						table.getColumnModel().getColumn(k).setCellRenderer(centerRenderer);
+					}
+				}
+				else {
+					JLabel label = new JLabel("Không có sinh viên nào");
+					tablePanel.add(label);
+					label.setBounds(40,25,1103,100);
+					label.setHorizontalAlignment(JLabel.CENTER);
+					label.setFont(new Font("Times New Roman", Font.BOLD, 24));
+				}
+				titleLabel.setText("DANH SÁCH LỚP "+ lopChon);
 				
-				JTable table = new JTable(model);
-				table.setForeground(Color.WHITE);
-				table.setBackground(new Color(44,62,80));
-				tablePanel.add(table);
-				table.setBounds(10, 11, 1155, 444);
+				
 				flag = false;
 			}
 		});
@@ -135,7 +184,7 @@ public class GiaovuGUI extends JFrame {
 		comboBox.setForeground(Color.WHITE);
 		comboBox.setBackground(new Color(108,122,137));
 		comboBox.setFont(new Font("Times New Roman", Font.PLAIN, 19));
-		comboBox.setBounds(303, 43, 367, 30);
+		comboBox.setBounds(306, 29, 367, 30);
 		dslopPanel.add(comboBox);
 		
 		JButton importButton = new JButton("Import CSV");
@@ -145,9 +194,18 @@ public class GiaovuGUI extends JFrame {
 			}
 		});
 		importButton.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-		importButton.setBounds(1003, 39, 128, 40);
+		importButton.setBounds(1003, 25, 128, 30);
 		importButton.setBackground(new Color(34,67,240));
 		dslopPanel.add(importButton);
+		
+		JButton btnThmSinhVin = new JButton("Thêm sinh viên");
+		btnThmSinhVin.setForeground(Color.WHITE);
+		btnThmSinhVin.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+		btnThmSinhVin.setBackground(new Color(34, 67, 240));
+		btnThmSinhVin.setBounds(859, 25, 128, 30);
+		dslopPanel.add(btnThmSinhVin);
+		
+		
 		
 		
 		
@@ -178,4 +236,6 @@ public class GiaovuGUI extends JFrame {
 			j.addItem(k.getMaLop());
 		}
 	}
+	
+	//public void themSinhVien(J)
 }
