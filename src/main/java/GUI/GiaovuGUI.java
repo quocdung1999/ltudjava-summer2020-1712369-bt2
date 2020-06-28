@@ -199,6 +199,11 @@ public class GiaovuGUI extends JFrame {
 		dslopPanel.add(importButton);
 		
 		JButton btnThmSinhVin = new JButton("Thêm sinh viên");
+		btnThmSinhVin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dienThongTinGUI d = new dienThongTinGUI();
+			}
+		});
 		btnThmSinhVin.setForeground(Color.WHITE);
 		btnThmSinhVin.setFont(new Font("Times New Roman", Font.PLAIN, 16));
 		btnThmSinhVin.setBackground(new Color(34, 67, 240));

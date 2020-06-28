@@ -2,11 +2,14 @@ package ClassDAO;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import Class.*;
-import HibernateUtil.HiberUtil; 
+import HibernateUtil.HiberUtil;
+import javassist.expr.NewArray; 
 
 public class LopDAO {
 	private List<Lop> l;
@@ -20,6 +23,20 @@ public class LopDAO {
 	public List<Lop> layDanhSachLop()
 	{
 		return l;
+	}
+	public Lop kiemTra(String maLop)
+	{
+		Query query = session.createQuery("from Lop where maLop = :maLop");
+		query.setParameter("maLop", maLop);
+		if (query.list().size()==0)
+		{
+			Transaction tx = session.beginTransaction();
+			Lop l = new Lop(maLop);
+            session.save(l);
+            tx.commit();
+			return l;
+		}
+		return (Lop)query.getSingleResult();
 	}
 	public List<Sinhvien> layDanhSachSinhvien(String maLop)
 	{

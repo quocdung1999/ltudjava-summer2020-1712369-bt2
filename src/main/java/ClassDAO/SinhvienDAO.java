@@ -37,7 +37,6 @@ public class SinhvienDAO {
         
         Query query = session.createQuery("from Sinhvien");
         sv = query.list();
-        session.close();
         for (Sinhvien sv1:sv)
         {
         	if (sv1.getMaSV().compareTo(s.getMaSV())==0)
@@ -49,7 +48,8 @@ public class SinhvienDAO {
         		s.getLop().getMaLop().length()>6||s.getCmnd().length()>12)
         	return false;
         
-        if (s.getGioiTinh().compareTo("Nam")!=0 &&s.getGioiTinh().compareTo("Nữ")!=0)
+        
+        if (s.getMaSV().trim().isEmpty())
         	return false;
         
         return true;
@@ -61,11 +61,12 @@ public class SinhvienDAO {
     		JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ. Hãy thử lại");
     	}
     	else {
+    		LopDAO l = new LopDAO();
     		Session session = HiberUtil.getSession();
             Transaction tx = session.beginTransaction();
             session.save(s);
             tx.commit();
-            session.close();
+            JOptionPane.showMessageDialog(null, "Thêm sinh viên thành công!");
 		}
     }
 }
