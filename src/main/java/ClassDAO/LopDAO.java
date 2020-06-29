@@ -1,7 +1,9 @@
 package ClassDAO;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import javax.swing.JOptionPane;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -26,6 +28,11 @@ public class LopDAO {
 	}
 	public Lop kiemTra(String maLop)
 	{
+		if (maLop.length()>6)
+			{
+				return null;
+			}
+			
 		Query query = session.createQuery("from Lop where maLop = :maLop");
 		query.setParameter("maLop", maLop);
 		if (query.list().size()==0)
@@ -38,19 +45,12 @@ public class LopDAO {
 		}
 		return (Lop)query.getSingleResult();
 	}
-	public List<Sinhvien> layDanhSachSinhvien(String maLop)
+	public Set<Sinhvien> layDanhSachSinhvien(String maLop)
 	{
-		SinhvienDAO svDAO = new SinhvienDAO();
-		List<Sinhvien> sv = new ArrayList<Sinhvien>();
-		for (Sinhvien s:svDAO.layDanhSachSV())
-		{
-			if (s.getLop().getMaLop().compareTo(maLop)==0)
-			{
-				sv.add(s);
-			}
-
-		}
-		return sv;
+		Query query = session.createQuery("from Lop where maLop = :maLop ");
+		query.setParameter("maLop", maLop);
+		Lop lop =(Lop)query.getSingleResult();
+		return lop.getDsSinhvien();
 	}
 	
 }

@@ -23,17 +23,14 @@ public class Giaovu {
     @Column (name = "password")
     private String password;
 
-    @Column (name = "status")
-    private boolean status;
 
     public Giaovu() {
     	
     }
 
-    public Giaovu(String username, String password, boolean status) {
+    public Giaovu(String username, String password) {
         this.username = username;
         this.password = password;
-        this.status = status;
     }
 
     public String getUsername() {
@@ -52,11 +49,4 @@ public class Giaovu {
         this.password = password;
     }
 
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
 }

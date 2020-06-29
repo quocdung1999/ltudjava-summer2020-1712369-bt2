@@ -34,7 +34,8 @@ public class SinhvienDAO {
     }
     public boolean svHopLe(Sinhvien s)
     {
-        
+        List <String> gioiTinh = new ArrayList<>();
+        gioiTinh.add("Nam");gioiTinh.add("Nữ");
         Query query = session.createQuery("from Sinhvien");
         sv = query.list();
         for (Sinhvien sv1:sv)
@@ -47,26 +48,31 @@ public class SinhvienDAO {
         if (s.getMaSV().length()>8||s.getPassword().length()>50||s.getHoTen().length()>50||
         		s.getLop().getMaLop().length()>6||s.getCmnd().length()>12)
         	return false;
-        
+        if (!gioiTinh.contains(s.getGioiTinh()))
+        	return false;
         
         if (s.getMaSV().trim().isEmpty())
         	return false;
         
         return true;
     }
-    public void themSinhVien(Sinhvien s)
+
+    public boolean themSinhVien(String maSV, String maLop,String password,String hoTen,String gioiTinh,String cmnd)
     {
-    	if (svHopLe(s)==false)
+    	
+    	LopDAO lopDAO = new LopDAO();
+    	Lop l = lopDAO.kiemTra(maLop);
+    	Sinhvien s = new Sinhvien(maSV,l,password,hoTen,gioiTinh,cmnd);
+    	if (l==null||svHopLe(s)==false)
     	{
-    		JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ. Hãy thử lại");
+    		return false;
     	}
     	else {
-    		LopDAO l = new LopDAO();
     		Session session = HiberUtil.getSession();
             Transaction tx = session.beginTransaction();
             session.save(s);
             tx.commit();
-            JOptionPane.showMessageDialog(null, "Thêm sinh viên thành công!");
+            return true;
 		}
     }
 }

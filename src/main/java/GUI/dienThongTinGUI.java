@@ -15,19 +15,24 @@ import org.w3c.dom.events.MouseEvent;
 import javassist.expr.Instanceof;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseListener;
 
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import javax.swing.JComboBox;
-
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import GiaovuGUITabs.*;
 public class dienThongTinGUI extends JFrame implements FocusListener{
 
 	private JPanel contentPane;
@@ -167,11 +172,15 @@ public class dienThongTinGUI extends JFrame implements FocusListener{
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				SinhvienDAO svDAO = new SinhvienDAO();
-				LopDAO lopDAO = new LopDAO();
-				Lop l = lopDAO.kiemTra(classText.getText());
-				Sinhvien s = new Sinhvien(idText.getText(),l,passText.getText(),false,nameText.getText(),
-						(String)comboBox.getSelectedItem(),cmndText.getText());
-				svDAO.themSinhVien(s);
+				if(svDAO.themSinhVien(idText.getText(), classText.getText(), passText.
+						getText(),nameText.getText(), (String)comboBox.getSelectedItem(), cmndText.getText()))
+				{
+					JOptionPane.showMessageDialog(null, "Thêm sinh viên thành công!");
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ!");
+				}
 			}
 		});
 		addButton.setForeground(Color.WHITE);
@@ -179,6 +188,8 @@ public class dienThongTinGUI extends JFrame implements FocusListener{
 		addButton.setBackground(new Color(34, 167, 240));
 		addButton.setBounds(229, 541, 125, 33);
 		bodyPanel.add(addButton);
+		
+
 		
 		
 	}

@@ -25,8 +25,6 @@ public class Sinhvien {
     private Set<Thamgia> thamgia;
     @Column(name = "password")
     private String password;
-    @Column(name = "status")
-    private boolean status;
 
 
     @Column(name = "hoTen")
@@ -40,24 +38,22 @@ public class Sinhvien {
         thamgia = new HashSet<Thamgia>();
     }
 
-    public Sinhvien(String maSV,Lop lop , String password, boolean status, String hoTen,
+    public Sinhvien(String maSV,Lop lop , String password, String hoTen,
                     String gioiTinh, String cmnd) {
         this.maSV = maSV;
         this.lop = lop;
         this.password = password;
-        this.status = status;
         this.hoTen = hoTen;
         this.gioiTinh = gioiTinh;
         this.cmnd = cmnd;
     }
 
     public Sinhvien(String maSV, Lop lop, Set<Thamgia> thamgia, String password,
-                    boolean status, String hoTen, String gioiTinh, String cmnd) {
+                     String hoTen, String gioiTinh, String cmnd) {
         this.maSV = maSV;
         this.lop = lop;
         this.thamgia = thamgia;
         this.password = password;
-        this.status = status;
         this.hoTen = hoTen;
         this.gioiTinh = gioiTinh;
         this.cmnd = cmnd;
@@ -92,14 +88,6 @@ public class Sinhvien {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
     }
 
     public String getHoTen() {
