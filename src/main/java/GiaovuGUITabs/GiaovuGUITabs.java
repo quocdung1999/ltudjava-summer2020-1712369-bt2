@@ -2,6 +2,7 @@ package GiaovuGUITabs;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -158,6 +160,17 @@ public class GiaovuGUITabs {
 				{
 					File selected = j.getSelectedFile();
 					Csv.danhSachSinhVien(selected);
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							try {
+								SwingUtilities.getWindowAncestor(dslopPanel).dispose();
+								GiaovuGUI g = new GiaovuGUI(gv);
+							}
+							catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
 				}
 			}
 		});
@@ -169,7 +182,8 @@ public class GiaovuGUITabs {
 		JButton btnThmSinhVien = new JButton("Thêm sinh viên");
 		btnThmSinhVien.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dienThongTinGUI d = new dienThongTinGUI();
+				dienThongTinGUI d = new dienThongTinGUI(
+						(JFrame)SwingUtilities.getWindowAncestor(dslopPanel),gv);
 			}
 		});
 		btnThmSinhVien.setForeground(Color.WHITE);

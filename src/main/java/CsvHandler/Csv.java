@@ -33,15 +33,21 @@ public class Csv {
 			
 			int row = records.size();
 			SinhvienDAO s = new SinhvienDAO();
+			boolean flag = true;
 			for (int i = 1;i<row;i++)
 			{
 				if(!s.themSinhVien(records.get(i).get(0).trim(), records.get(i).get(1).trim(), records.get(i).get(2).trim(), 
 						records.get(i).get(3).trim(), records.get(i).get(4).trim(), records.get(i).get(5).trim()))
 				{
-					JOptionPane.showMessageDialog(null, "Có thông tin sinh viên không hợp lệ!\n"
-							+ "Sinh viên này sẽ không được lưu!");
+					if (flag)
+					{
+						JOptionPane.showMessageDialog(null, "Có thông tin sinh viên không hợp lệ!\n"
+							+ "và sẽ không được lưu!");
+						flag = false;
+					}
 				}
 			}
+			JOptionPane.showMessageDialog(null, "File đã được xử lý xong!");
 		} 
 		
 		catch (FileNotFoundException e) {

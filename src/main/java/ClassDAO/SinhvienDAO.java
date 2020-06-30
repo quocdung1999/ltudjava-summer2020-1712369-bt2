@@ -6,7 +6,10 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -68,8 +71,10 @@ public class SinhvienDAO {
     		return false;
     	}
     	else {
-    		Session session = HiberUtil.getSession();
             Transaction tx = session.beginTransaction();
+            Set<Sinhvien> sv = l.getDsSinhvien();
+            sv.add(s);
+            l.setDsSinhvien(sv);
             session.save(s);
             tx.commit();
             return true;

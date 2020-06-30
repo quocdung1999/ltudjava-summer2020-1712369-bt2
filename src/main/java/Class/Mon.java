@@ -56,6 +56,7 @@ public class Mon {
         this.lopHoc = lopHoc;
         this.tenMon = tenMon;
         this.phong = phong;
+        thamgia = new HashSet<Thamgia>();
     }
 
     public int getIDMon() {

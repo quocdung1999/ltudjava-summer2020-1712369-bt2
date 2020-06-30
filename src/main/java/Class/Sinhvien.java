@@ -46,6 +46,7 @@ public class Sinhvien {
         this.hoTen = hoTen;
         this.gioiTinh = gioiTinh;
         this.cmnd = cmnd;
+        thamgia = new HashSet<Thamgia>();
     }
 
     public Sinhvien(String maSV, Lop lop, Set<Thamgia> thamgia, String password,

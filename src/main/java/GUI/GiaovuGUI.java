@@ -3,7 +3,9 @@ package GUI;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,6 +17,7 @@ import ClassDAO.*;
 import CsvHandler.Csv;
 
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -65,10 +68,10 @@ public class GiaovuGUI extends JFrame {
 		String name = gv.getUsername();
 		JLabel welcomeLabel = new JLabel("Xin chào, "+name);
 		welcomeLabel.setForeground(Color.WHITE);
-		welcomeLabel.setBounds(936, 11, 236, 19);
+		welcomeLabel.setBounds(10, 11, 253, 19);
 		headerPanel.add(welcomeLabel);
 		welcomeLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
-		welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		welcomeLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		
 		JLabel lblNewLabel_1 = new JLabel("QUẢN LÝ SINH VIÊN");
 		lblNewLabel_1.setForeground(Color.WHITE);
@@ -79,8 +82,10 @@ public class GiaovuGUI extends JFrame {
 		JLabel lblNewLabel_2 = new JLabel("Đổi mật khẩu");
 		lblNewLabel_2.setForeground(Color.WHITE);
 		lblNewLabel_2.setFont(new Font("Times New Roman", Font.PLAIN, 15));
-		lblNewLabel_2.setBounds(1015, 34, 85, 25);
+		lblNewLabel_2.setBounds(32, 36, 85, 25);
 		headerPanel.add(lblNewLabel_2);
+		
+		
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setForeground(Color.WHITE);
@@ -88,16 +93,16 @@ public class GiaovuGUI extends JFrame {
 		tabbedPane.setBackground(new Color(44,62,80));
 		getContentPane().add(tabbedPane);
 		
-		JPanel dslopPanel = new JPanel();
 		
 		
+		//DANH SÁCH LỚP
+		
+		JPanel dslopPanel = new JPanel();		
 		dslopPanel.setBackground(new Color(44,62,80));
 		tabbedPane.addTab("Danh sách lớp", null, dslopPanel, null);
 		dslopPanel.setLayout(null);
 		GiaovuGUITabs.danhSachLop(dslopPanel, gv);
 		
-		
-	
 		
 		
 		// THỜI KHÓA BIỂU
@@ -107,6 +112,150 @@ public class GiaovuGUI extends JFrame {
 		tkbPanel.setBackground(new Color(44,62,80));
 		tabbedPane.addTab("Thời khóa biểu", null, tkbPanel, null);
 		tkbPanel.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Chọn lớp");
+		lblNewLabel.setForeground(Color.WHITE);
+		lblNewLabel.setFont(new Font("Times New Roman", Font.BOLD, 23));
+		lblNewLabel.setBounds(67, 28, 95, 30);
+		tkbPanel.add(lblNewLabel);
+		
+		JPanel tablePanel = new JPanel();
+		tablePanel.setBackground(new Color(44,62,80));
+		tablePanel.setBounds(10, 131, 1175, 418);
+		tkbPanel.add(tablePanel);
+		tablePanel.setLayout(null);
+		
+		
+		JLabel titleLabel = new JLabel("");
+		titleLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
+		titleLabel.setForeground(Color.WHITE);
+		titleLabel.setBounds(424, 83, 357, 37);
+		titleLabel.setHorizontalAlignment(JLabel.CENTER);
+		tkbPanel.add(titleLabel);
+		
+		JComboBox<String> lopBox = new JComboBox<String>();
+		//themLop(lopBox);
+
+		
+		lopBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if (!GiaovuGUI.flag)
+				{
+					tablePanel.removeAll();
+					tablePanel.setLayout(null);
+				}
+				DefaultTableModel model = new DefaultTableModel();
+				
+				model.addColumn("STT");model.addColumn("MSSV");model.addColumn("Họ và tên");
+				model.addColumn("Giới tính");model.addColumn("CMND");
+				
+				String lopChon =(String) lopBox.getSelectedItem();
+				LopDAO l =new LopDAO();
+				Set<Sinhvien> s = l.layDanhSachSinhvien(lopChon);
+				int i = 1;
+				for (Sinhvien sv:s)
+				{
+					model.addRow(new Object[] {i,sv.getMaSV(),sv.getHoTen(),sv.getGioiTinh(),sv.getCmnd()});
+					i++;
+				}
+				if (s.size()>0)
+				{
+					JTable table = new JTable(model){
+				         public boolean editCellAt(int row, int column, java.util.EventObject e) {
+				             return false;
+				          }
+				         
+				         @Override
+				         public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+				             Component component = super.prepareRenderer(renderer, row, column);
+				             int rendererWidth = component.getPreferredSize().width;
+				             TableColumn tableColumn = getColumnModel().getColumn(column);
+				             tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width,
+				            		 tableColumn.getPreferredWidth()));
+				             return component;
+				          }
+					};
+					table.setForeground(Color.WHITE);
+					table.setBackground(new Color(44,62,80));
+					table.setFont(new Font("Times New Roman", Font.BOLD, 18));
+					table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+					table.setFillsViewportHeight(true);
+					JScrollPane scrollPane = new JScrollPane(table);
+					scrollPane.setViewportView(table);
+					tablePanel.add(scrollPane);
+					scrollPane.setBounds(40,25,1103,380);
+			
+					DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+					centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+					int column = table.getColumnModel().getColumnCount();
+					
+					for (int k=0;k<column;k++)
+					{
+						table.getColumnModel().getColumn(k).setCellRenderer(centerRenderer);
+					}
+				}
+				else {
+					JLabel label = new JLabel("Không có sinh viên nào");
+					
+					tablePanel.add(label);
+					label.setBounds(40,25,1103,500);
+					label.setVerticalAlignment(JLabel.NORTH);
+					label.setHorizontalAlignment(JLabel.CENTER);
+					label.setFont(new Font("Times New Roman", Font.BOLD, 24));
+					label.setForeground(Color.WHITE);
+				}
+				titleLabel.setText("DANH SÁCH LỚP "+ lopChon);
+				
+				
+				GiaovuGUI.flag = false;
+			}
+		});
+		
+		
+		
+		((JLabel) lopBox.getRenderer()).setHorizontalAlignment(DefaultListCellRenderer.CENTER);
+		lopBox.setForeground(Color.WHITE);
+		lopBox.setBackground(new Color(108,122,137));
+		lopBox.setFont(new Font("Times New Roman", Font.PLAIN, 19));
+		lopBox.setBounds(306, 29, 367, 30);
+		tkbPanel.add(lopBox);
+		
+		JButton importButton = new JButton("Import CSV");
+		importButton.setForeground(Color.WHITE);
+		importButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser j = new JFileChooser("C:");
+				FileNameExtensionFilter f = new FileNameExtensionFilter("CSV Files","csv");
+				j.setFileFilter(f);
+				int result = j.showOpenDialog(importButton);
+				if (result == JFileChooser.APPROVE_OPTION)
+				{
+					File selected = j.getSelectedFile();
+					Csv.danhSachSinhVien(selected);
+				}
+			}
+		});
+		importButton.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+		importButton.setBounds(1003, 25, 128, 30);
+		importButton.setBackground(new Color(34,67,240));
+		tkbPanel.add(importButton);
+		
+		JButton btnThmSinhVien = new JButton("Thêm sinh viên");
+		btnThmSinhVien.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dienThongTinGUI d = new dienThongTinGUI(
+						(JFrame)SwingUtilities.getWindowAncestor(dslopPanel),gv);
+			}
+		});
+		btnThmSinhVien.setForeground(Color.WHITE);
+		btnThmSinhVien.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+		btnThmSinhVien.setBackground(new Color(34, 67, 240));
+		btnThmSinhVien.setBounds(859, 25, 128, 30);
+		tkbPanel.add(btnThmSinhVien);
+		
+		
+		
 		
 		
 		
@@ -125,6 +274,11 @@ public class GiaovuGUI extends JFrame {
 		yeucauPanel.setBackground(new Color(44,62,80));
 		tabbedPane.addTab("Duyệt yêu cầu", null, yeucauPanel, null);
 		yeucauPanel.setLayout(null);
+		
+		
+		
+		
+	
 		
 		
 		

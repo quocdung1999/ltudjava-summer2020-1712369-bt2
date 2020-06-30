@@ -45,7 +45,7 @@ public class dienThongTinGUI extends JFrame implements FocusListener{
 	/**
 	 * Create the frame.
 	 */
-	public dienThongTinGUI() {
+	public dienThongTinGUI(JFrame frame,Giaovu gv) {
 		setResizable(false);
 		setTitle("Điền thông tin sinh viên");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -176,6 +176,18 @@ public class dienThongTinGUI extends JFrame implements FocusListener{
 						getText(),nameText.getText(), (String)comboBox.getSelectedItem(), cmndText.getText()))
 				{
 					JOptionPane.showMessageDialog(null, "Thêm sinh viên thành công!");
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							try {
+								frame.dispose();
+								dispose();
+								GiaovuGUI g = new GiaovuGUI(gv);
+							}
+							catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
 				}
 				else
 				{

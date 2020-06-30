@@ -39,7 +39,7 @@ public class LopDAO {
 		{
 			Transaction tx = session.beginTransaction();
 			Lop l = new Lop(maLop);
-            session.save(l);
+			session.save(l);
             tx.commit();
 			return l;
 		}

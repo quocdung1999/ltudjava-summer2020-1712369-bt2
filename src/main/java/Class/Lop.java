@@ -30,6 +30,8 @@ public class Lop {
 
     public Lop(String maLop) {
         this.maLop = maLop;
+        dsMon = new HashSet<Mon>();
+        dsSinhvien = new HashSet<Sinhvien>();
     }
 
     public Lop(String maLop, Set<Mon> dsMon, Set<Sinhvien> dsSinhvien) {
