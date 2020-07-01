@@ -1,5 +1,6 @@
 package ClassDAO;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,11 +20,12 @@ public class LopDAO {
 	public LopDAO()
 	{
 		l = new ArrayList<Lop>();
-        Query<Lop> query = session.createQuery("from Lop");
-        l = query.list();
+        
 	}
 	public List<Lop> layDanhSachLop()
 	{
+		Query<Lop> query = session.createQuery("from Lop");
+        l = query.list();
 		return l;
 	}
 	public Lop kiemTra(String maLop)
@@ -45,12 +47,19 @@ public class LopDAO {
 		}
 		return (Lop)query.getSingleResult();
 	}
+	
 	public Set<Sinhvien> layDanhSachSinhvien(String maLop)
 	{
 		Query query = session.createQuery("from Lop where maLop = :maLop ");
 		query.setParameter("maLop", maLop);
-		Lop lop =(Lop)query.getSingleResult();
-		return lop.getDsSinhvien();
+		if (query.list().size()>0)
+		{
+			Lop lop =(Lop)query.getSingleResult();
+			return lop.getDsSinhvien();
+		}
+		else
+		{
+			return new HashSet<Sinhvien>();
+		}
 	}
-	
 }

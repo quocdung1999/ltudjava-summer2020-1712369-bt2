@@ -26,13 +26,12 @@ public class SinhvienDAO {
     private List<Sinhvien> sv ;
     private Session session = HiberUtil.getSession();
     public SinhvienDAO() {
-        sv = new ArrayList<Sinhvien>();
-        Query<Sinhvien> query = session.createQuery("from Sinhvien");
-        sv = query.list();
+    	sv = new ArrayList<Sinhvien>();
     }
     public List<Sinhvien> layDanhSachSV()
     {
-        
+        Query<Sinhvien> query = session.createQuery("from Sinhvien");
+        sv = query.list();
         return sv;
     }
     public boolean svHopLe(Sinhvien s)
@@ -64,6 +63,7 @@ public class SinhvienDAO {
     {
     	
     	LopDAO lopDAO = new LopDAO();
+    	ThamgiaDAO tgDAO = new ThamgiaDAO();
     	Lop l = lopDAO.kiemTra(maLop);
     	Sinhvien s = new Sinhvien(maSV,l,password,hoTen,gioiTinh,cmnd);
     	if (l==null||svHopLe(s)==false)
@@ -77,6 +77,11 @@ public class SinhvienDAO {
             l.setDsSinhvien(sv);
             session.save(s);
             tx.commit();
+            if (l.getDsMon().size()>0)
+    		{
+    			tgDAO.themThamGiaCacMon(s, l);
+    		}
+
             return true;
 		}
     }

@@ -31,8 +31,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import javax.swing.JComboBox;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import GiaovuGUITabs.*;
 public class dienThongTinGUI extends JFrame implements FocusListener{
 
 	private JPanel contentPane;

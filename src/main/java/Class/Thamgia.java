@@ -48,6 +48,18 @@ public class Thamgia {
     public Thamgia() {
     }
 
+    public Thamgia( Sinhvien sv, Mon mon, boolean duyet, boolean khongHoc,
+            BigDecimal diemGK, BigDecimal diemCK, BigDecimal diemKhac, BigDecimal diemTong) {
+	 this.sv = sv;
+	 this.mon = mon;
+	 this.duyet = duyet;
+	 this.khongHoc = khongHoc;
+	 this.diemGK = diemGK;
+	 this.diemCK = diemCK;
+	 this.diemKhac = diemKhac;
+	 this.diemTong = diemTong;
+    }
+    
     public Thamgia(ThamgiaPK id, Sinhvien sv, Mon mon, boolean duyet, boolean khongHoc,
                    BigDecimal diemGK, BigDecimal diemCK, BigDecimal diemKhac, BigDecimal diemTong) {
         this.id = id;
