@@ -20,6 +20,8 @@ import CsvHandler.Csv;
 
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -160,10 +162,10 @@ public class GiaovuGUI extends JFrame {
 		
 		JPanel tablePanel = new JPanel();
 		tablePanel.setBackground(new Color(44,62,80));
-		tablePanel.setBounds(10, 210, 1170, 314);
+		tablePanel.setBounds(10, 210, 1170, 359);
 		diemPanel.add(tablePanel);
 		tablePanel.setLayout(null);
-		
+
 		
 		JLabel titleLabel = new JLabel("");
 		titleLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
@@ -259,37 +261,46 @@ public class GiaovuGUI extends JFrame {
 							
 							
 							DefaultTableModel model = new DefaultTableModel();
+							
 							model.addColumn("STT");model.addColumn("MSSV");model.addColumn("Họ và tên");
 							model.addColumn("Điểm GK");model.addColumn("Điểm CK");
 							model.addColumn("Điểm khác");model.addColumn("Điểm tổng");
-							model.addColumn("Kết quả");;
-														
+							model.addColumn("Kết quả");
+													
 							
 							if (tgs.size()>0)
 							{
-								if (tgDAO.kiemTraDuDiem(lopChon, 
-										monChon.substring(0, monChon.indexOf("-")).trim()))
-								{
+							
 									int i = 1;
 									int soLuongDau = 0;
 									for (Thamgia tg:tgs)
 									{
-										List<BigDecimal> diem = new ArrayList<BigDecimal>();
 										List<String> s = new ArrayList<String>();
-										diem.add(tg.getDiemGK());diem.add(tg.getDiemCK());
-										diem.add(tg.getDiemKhac());diem.add(tg.getDiemTong());
-										for (BigDecimal d : diem)
-										{									
-												s.add(d.toString());
+										if (tg.getDiemGK()!= null)
+										{
+											s.add(tg.getDiemGK().toString());s.add(tg.getDiemCK().toString());
+											s.add(tg.getDiemKhac().toString());s.add(tg.getDiemTong().toString());
+											model.addRow(new Object[] {i,tg.getSv().getMaSV(),tg.getSv().getHoTen(),
+													s.get(0),s.get(1),s.get(2),s.get(3),
+													Float.parseFloat(s.get(3))>= 5 ? "Đậu":"Rớt"});
+											
+											soLuongDau = soLuongDau + (Float.parseFloat(s.get(3))>= 5 ? 1:0);
 										}
-										model.addRow(new Object[] {i,tg.getSv().getMaSV(),tg.getSv().getHoTen(),
-												s.get(0),s.get(1),s.get(2),s.get(3),
-												Integer.parseInt(s.get(3))>= 5 ? "Đậu":"Rớt"});
+										else
+										{
+											s.add("-");s.add("-");s.add("-");s.add("-");
+											model.addRow(new Object[] {i,tg.getSv().getMaSV(),tg.getSv().
+												getHoTen(),s.get(0),s.get(1),s.get(2),s.get(3),"-"});
+										}
 										i++;
-										soLuongDau = soLuongDau + (Integer.parseInt(s.get(3))>= 5 ? 1:0);
+										
+										
 									}
 									JTable table = new JTable(model){
-								         public boolean editCellAt(int row, int column, java.util.EventObject e) {
+										@Override
+								         public boolean isCellEditable(int row, int column) {
+								        	 if (column ==3 || column==4 || column==5 || column==6)
+								        		 return true;
 								             return false;
 								          }
 								         
@@ -304,6 +315,7 @@ public class GiaovuGUI extends JFrame {
 								             return component;
 								          }
 									};
+		
 									table.setForeground(Color.WHITE);
 									table.setBackground(new Color(44,62,80));
 									table.setFont(new Font("Times New Roman", Font.BOLD, 18));
@@ -312,8 +324,11 @@ public class GiaovuGUI extends JFrame {
 									JScrollPane scrollPane = new JScrollPane(table);
 									scrollPane.setViewportView(table);
 									tablePanel.add(scrollPane);
-									scrollPane.setBounds(35,5,1100,314);
-							
+									scrollPane.setBounds(35,5,1100,309);
+									
+									
+									
+									
 									DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 									centerRenderer.setHorizontalAlignment( JLabel.CENTER );
 									int column = table.getColumnModel().getColumnCount();
@@ -336,29 +351,65 @@ public class GiaovuGUI extends JFrame {
 									thongKeButton.setForeground(Color.WHITE);
 									thongKeButton.setFont(new Font("Times New Roman", Font.BOLD, 16));
 									thongKeButton.setBackground(new Color(34, 67, 240));
-									thongKeButton.setBounds(550, 535, 125, 30);
-									diemPanel.add(thongKeButton);
+									thongKeButton.setVisible(true);
+									thongKeButton.setBounds(540, 318, 120, 30);
+									tablePanel.add(thongKeButton);
 									
-								}
-								else
-								{
-									JLabel label = new JLabel();
-									
-									tablePanel.add(label);
-									label.setBounds(35,5,1100,314);
-									label.setVerticalAlignment(JLabel.CENTER);
-									label.setHorizontalAlignment(JLabel.CENTER);
-									label.setFont(new Font("Times New Roman", Font.BOLD, 24));
-									label.setForeground(Color.WHITE);
-									JOptionPane.showInternalMessageDialog(null,
-											"Còn sinh viên trong lớp chưa có điểm");
-								}
+									model.addTableModelListener(new TableModelListener() {
+										public void tableChanged (TableModelEvent e) {
+										int row = e.getFirstRow();
+										int column = e.getColumn();
+										List<Object> data = new ArrayList<Object>();
+										String maMon = monChon.substring(0, monChon.indexOf("-")).trim();
+										if (column==3)
+										{
+											if (!tgDAO.suaDiemGK(lopChon, maMon,
+						model.getValueAt(row, 1).toString(), model.getValueAt(row, column).toString().trim()))
+											{
+												JOptionPane.showMessageDialog(null,
+														"Điểm sửa đổi không hợp lệ!");
+											}
+											
+										}
+										else if (column==4)
+										{
+											if (!tgDAO.suaDiemCK(lopChon, maMon,
+						model.getValueAt(row, 1).toString(), model.getValueAt(row, column).toString().trim()))
+											{
+												JOptionPane.showMessageDialog(null,
+														"Điểm sửa đổi không hợp lệ!");
+											}
+											
+										}
+										else if (column==5)
+										{
+											if (!tgDAO.suaDiemKhac(lopChon, maMon,
+						model.getValueAt(row, 1).toString(), model.getValueAt(row, column).toString().trim()))
+											{
+												JOptionPane.showMessageDialog(null,
+														"Điểm sửa đổi không hợp lệ!");
+											}
+											
+										}
+										else if (column==6)
+										{
+											if (!tgDAO.suaDiemTong(lopChon, maMon,
+						model.getValueAt(row, 1).toString(), model.getValueAt(row, column).toString().trim()))
+											{
+												JOptionPane.showMessageDialog(null,
+														"Điểm sửa đổi không hợp lệ!");
+											}
+											
+										}
+										}
+									});
+								
 							}
 							else {
 								JLabel label = new JLabel("Không có sinh viên trong lớp này");
 								
 								tablePanel.add(label);
-								label.setBounds(35,5,1100,314);
+								label.setBounds(35,5,1100,309);
 								label.setVerticalAlignment(JLabel.CENTER);
 								label.setHorizontalAlignment(JLabel.CENTER);
 								label.setFont(new Font("Times New Roman", Font.BOLD, 24));

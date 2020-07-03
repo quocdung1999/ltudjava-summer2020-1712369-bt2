@@ -50,7 +50,8 @@ public class ThamgiaDAO {
 	{
 		if (kiemTraThamGia(maLop, maMon,maSV)==false)
 			return false;
-		try {
+		try
+		 {
 			BigDecimal one = new BigDecimal(Float.parseFloat(diemGK));
 			BigDecimal two = new BigDecimal(Float.parseFloat(diemCK));
 			BigDecimal three = new BigDecimal(Float.parseFloat(diemKhac));
@@ -58,33 +59,25 @@ public class ThamgiaDAO {
 			if (!soSanhDiem(one)||!soSanhDiem(two)||!soSanhDiem(three)||!soSanhDiem(four))
 				return false;
 			
-			Query query = session.createQuery("update Thamgia tg set tg.diemGK = :one,tg.diemCK = :two"
-					+ ",tg.diemKhac = :three,tg.diemTong = :four where tg.mon.maMon = :maMon"
-					+ " and tg.mon.lopHoc.maLop = :maLop and tg.sv.maSV = :maSV");
+			Query query = session.createQuery("from Thamgia tg where tg.mon.maMon = :maMon"  
+										+" and tg.mon.lopHoc.maLop = :maLop and tg.sv.maSV = :maSV");
 			query.setParameter("maMon", maMon);
 			query.setParameter("maLop", maLop);
 			query.setParameter("maSV", maSV);
-			
-			
-		} catch (Exception e) {
+			Thamgia tg = (Thamgia) query.getSingleResult();
+			tg.setDiemGK(one);tg.setDiemCK(two);tg.setDiemKhac(three);tg.setDiemTong(four);
+			Transaction tx = session.beginTransaction();
+			session.update(tg);
+			tx.commit();
+		} 
+		catch (Exception e)
+		{
 			return false;
 		}
 		return true;
 	}
 	
-	//Kiểm tra xem các sinh viên thuộc môn này đã có đủ điểm chưa
-	public boolean kiemTraDuDiem(String maLop,String maMon)
-	{
-		Query query = session.createQuery("from Thamgia tg where tg.mon.maMon = :maMon"
-				+ " and tg.mon.lopHoc.maLop = :maLop ");
-		List<Thamgia> tg = query.list();
-		for (Thamgia t:tg)
-		{
-			if (t.getDiemCK()==null||t.getDiemCK()==null||t.getDiemKhac()==null||t.getDiemTong()==null)
-				return false;
-		}
-		return true;
-	}
+	
 	public List<Thamgia> layBangDiem(String maMon,String maLop)
 	{
 		Query query = session.createQuery("from Thamgia tg where tg.mon.maMon = :maMon"
@@ -145,5 +138,118 @@ public class ThamgiaDAO {
 			session.save(tg);
 			tx.commit();
 		}
+	}
+	
+	
+	public boolean suaDiemGK(String maLop,String maMon,String maSV,String diemGK)
+	{
+		if (kiemTraThamGia(maLop, maMon,maSV)==false)
+			return false;
+		try
+		 {
+			BigDecimal one = new BigDecimal(Float.parseFloat(diemGK));
+			if (!soSanhDiem(one))
+				return false;
+			
+			Query query = session.createQuery("from Thamgia tg where tg.mon.maMon = :maMon"  
+										+" and tg.mon.lopHoc.maLop = :maLop and tg.sv.maSV = :maSV");
+			query.setParameter("maMon", maMon);
+			query.setParameter("maLop", maLop);
+			query.setParameter("maSV", maSV);
+			Thamgia tg = (Thamgia) query.getSingleResult();
+			tg.setDiemGK(one);
+			Transaction tx = session.beginTransaction();
+			session.update(tg);
+			tx.commit();
+		} 
+		catch (Exception e)
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean suaDiemCK(String maLop,String maMon,String maSV,String diemCK)
+	{
+		if (kiemTraThamGia(maLop, maMon,maSV)==false)
+			return false;
+		try
+		 {
+			BigDecimal one = new BigDecimal(Float.parseFloat(diemCK));
+			if (!soSanhDiem(one))
+				return false;
+			
+			Query query = session.createQuery("from Thamgia tg where tg.mon.maMon = :maMon"  
+										+" and tg.mon.lopHoc.maLop = :maLop and tg.sv.maSV = :maSV");
+			query.setParameter("maMon", maMon);
+			query.setParameter("maLop", maLop);
+			query.setParameter("maSV", maSV);
+			Thamgia tg = (Thamgia) query.getSingleResult();
+			tg.setDiemCK(one);
+			Transaction tx = session.beginTransaction();
+			session.update(tg);
+			tx.commit();
+		} 
+		catch (Exception e)
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean suaDiemKhac(String maLop,String maMon,String maSV,String diemKhac)
+	{
+		if (kiemTraThamGia(maLop, maMon,maSV)==false)
+			return false;
+		try
+		 {
+			BigDecimal one = new BigDecimal(Float.parseFloat(diemKhac));
+			if (!soSanhDiem(one))
+				return false;
+			
+			Query query = session.createQuery("from Thamgia tg where tg.mon.maMon = :maMon"  
+										+" and tg.mon.lopHoc.maLop = :maLop and tg.sv.maSV = :maSV");
+			query.setParameter("maMon", maMon);
+			query.setParameter("maLop", maLop);
+			query.setParameter("maSV", maSV);
+			Thamgia tg = (Thamgia) query.getSingleResult();
+			tg.setDiemKhac(one);
+			Transaction tx = session.beginTransaction();
+			session.update(tg);
+			tx.commit();
+		} 
+		catch (Exception e)
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean suaDiemTong(String maLop,String maMon,String maSV,String diemTong)
+	{
+		if (kiemTraThamGia(maLop, maMon,maSV)==false)
+			return false;
+		try
+		 {
+			BigDecimal one = new BigDecimal(Float.parseFloat(diemTong));
+			if (!soSanhDiem(one))
+				return false;
+			
+			Query query = session.createQuery("from Thamgia tg where tg.mon.maMon = :maMon"  
+										+" and tg.mon.lopHoc.maLop = :maLop and tg.sv.maSV = :maSV");
+			query.setParameter("maMon", maMon);
+			query.setParameter("maLop", maLop);
+			query.setParameter("maSV", maSV);
+			Thamgia tg = (Thamgia) query.getSingleResult();
+			tg.setDiemTong(one);
+			Transaction tx = session.beginTransaction();
+			session.update(tg);
+			tx.commit();
+		} 
+		catch (Exception e)
+		{
+			return false;
+		}
+		return true;
 	}
 }
