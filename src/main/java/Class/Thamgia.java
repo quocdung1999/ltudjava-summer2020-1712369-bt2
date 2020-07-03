@@ -46,6 +46,7 @@ public class Thamgia {
     private BigDecimal diemTong;
 
     public Thamgia() {
+    	
     }
 
     public Thamgia( Sinhvien sv, Mon mon, boolean duyet, boolean khongHoc,

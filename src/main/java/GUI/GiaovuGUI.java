@@ -34,6 +34,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.math.BigDecimal;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 
@@ -43,6 +44,9 @@ public class GiaovuGUI extends JFrame {
 	private boolean dsl_monFlag = false;
 	private boolean tkbFlag = true;
 	private boolean tkb_lopFlag = false;
+	private boolean diemFlag = true;
+	private boolean diem_lopFlag = false;
+	private boolean diem_monFlag = false;
 	
 	/**
 	 * Create the frame.
@@ -119,10 +123,259 @@ public class GiaovuGUI extends JFrame {
 		
 		// ĐIỂM
 		
+
+		
 		JPanel diemPanel = new JPanel();
 		diemPanel.setBackground(new Color(44,62,80));
 		tabbedPane.addTab("Bảng điểm", null, diemPanel, null);
 		diemPanel.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Chọn lớp");
+		lblNewLabel.setForeground(Color.WHITE);
+		lblNewLabel.setFont(new Font("Times New Roman", Font.BOLD, 23));
+		lblNewLabel.setBounds(10, 72, 95, 30);
+		diemPanel.add(lblNewLabel);
+		
+		JLabel monChooseLabel = new JLabel("Chọn môn ");
+		monChooseLabel.setForeground(Color.WHITE);
+		monChooseLabel.setFont(new Font("Times New Roman", Font.BOLD, 23));
+		monChooseLabel.setBounds(479, 72, 119, 30);
+		diemPanel.add(monChooseLabel);
+		
+		JComboBox<String> monBox = new JComboBox<String>();
+		monBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (monBox.getItemCount()>0)
+				{
+					diem_monFlag = true;
+				}
+			}
+		});
+		((JLabel) monBox.getRenderer()).setHorizontalAlignment(DefaultListCellRenderer.CENTER);
+		monBox.setForeground(Color.WHITE);
+		monBox.setFont(new Font("Times New Roman", Font.BOLD, 19));
+		monBox.setBackground(new Color(108, 122, 137));
+		monBox.setBounds(608, 73, 523, 30);
+		diemPanel.add(monBox);
+		
+		JPanel tablePanel = new JPanel();
+		tablePanel.setBackground(new Color(44,62,80));
+		tablePanel.setBounds(10, 210, 1170, 314);
+		diemPanel.add(tablePanel);
+		tablePanel.setLayout(null);
+		
+		
+		JLabel titleLabel = new JLabel("");
+		titleLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
+		titleLabel.setForeground(Color.WHITE);
+		titleLabel.setBounds(10, 173, 1180, 37);
+		titleLabel.setHorizontalAlignment(JLabel.CENTER);
+		diemPanel.add(titleLabel);
+		
+		JComboBox<String> lopBox = new JComboBox<String>();
+		themLop(lopBox);
+		lopBox.setSelectedItem(null);
+				
+				lopBox.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (monBox.getItemCount()>0)
+							monBox.removeAllItems();
+						MonDAO m = new MonDAO();
+						String lopChon = (String)lopBox.getSelectedItem();
+						List<Mon> mons = m.layDanhSachMon(lopChon);
+						for (Mon mon :mons)
+						{
+							monBox.addItem(mon.getMaMon()+" - "+mon.getTenMon());
+						}
+						monBox.setSelectedItem(null);
+						diem_lopFlag = true;
+						diem_monFlag = false;
+					}
+				});
+				
+				
+				
+				((JLabel) lopBox.getRenderer()).setHorizontalAlignment(DefaultListCellRenderer.CENTER);
+				lopBox.setForeground(Color.WHITE);
+				lopBox.setBackground(new Color(108,122,137));
+				lopBox.setFont(new Font("Times New Roman", Font.BOLD, 19));
+				lopBox.setBounds(138, 73, 292, 30);
+				diemPanel.add(lopBox);
+				
+				JButton importButton = new JButton("Import CSV");
+				importButton.setForeground(Color.WHITE);
+				importButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						JFileChooser j = new JFileChooser("C:");
+						FileNameExtensionFilter f = new FileNameExtensionFilter("CSV Files","csv");
+						j.setFileFilter(f);
+						int result = j.showOpenDialog(importButton);
+						if (result == JFileChooser.APPROVE_OPTION)
+						{
+							File selected = j.getSelectedFile();
+							Csv.bangDiem(selected);
+							EventQueue.invokeLater(new Runnable() {
+								public void run() {
+									try {
+										dispose();
+										GiaovuGUI g = new GiaovuGUI(gv);
+									}
+									catch (Exception e) {
+										e.printStackTrace();
+									}
+								}
+							});
+						}
+					}
+				});
+				importButton.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+				importButton.setBounds(1022, 25, 128, 30);
+				importButton.setBackground(new Color(34,67,240));
+				diemPanel.add(importButton);
+				
+				JButton execButton = new JButton("Xem bảng điểm");
+				execButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (!diemFlag)
+						{
+							tablePanel.removeAll();
+							tablePanel.setLayout(null);
+						}
+						if (!diem_lopFlag || !diem_monFlag)
+						{
+							JOptionPane.showMessageDialog(null, "Bạn chưa chọn lớp và môn học!");
+						}
+						else {
+							String lopChon =(String) lopBox.getSelectedItem();
+							String monChon = (String) monBox.getSelectedItem();
+							
+							List<Thamgia> tgs;
+							
+							ThamgiaDAO tgDAO = new ThamgiaDAO();
+							tgs = tgDAO.layBangDiem(monChon.substring(0, 
+									monChon.indexOf("-")).trim(), lopChon);
+							titleLabel.setText("BẢNG ĐIỂM LỚP "+ lopChon+" - "+
+							monChon.substring(0, monChon.indexOf("-")).trim());
+							
+							
+							DefaultTableModel model = new DefaultTableModel();
+							model.addColumn("STT");model.addColumn("MSSV");model.addColumn("Họ và tên");
+							model.addColumn("Điểm GK");model.addColumn("Điểm CK");
+							model.addColumn("Điểm khác");model.addColumn("Điểm tổng");
+							model.addColumn("Kết quả");;
+														
+							
+							if (tgs.size()>0)
+							{
+								if (tgDAO.kiemTraDuDiem(lopChon, 
+										monChon.substring(0, monChon.indexOf("-")).trim()))
+								{
+									int i = 1;
+									int soLuongDau = 0;
+									for (Thamgia tg:tgs)
+									{
+										List<BigDecimal> diem = new ArrayList<BigDecimal>();
+										List<String> s = new ArrayList<String>();
+										diem.add(tg.getDiemGK());diem.add(tg.getDiemCK());
+										diem.add(tg.getDiemKhac());diem.add(tg.getDiemTong());
+										for (BigDecimal d : diem)
+										{									
+												s.add(d.toString());
+										}
+										model.addRow(new Object[] {i,tg.getSv().getMaSV(),tg.getSv().getHoTen(),
+												s.get(0),s.get(1),s.get(2),s.get(3),
+												Integer.parseInt(s.get(3))>= 5 ? "Đậu":"Rớt"});
+										i++;
+										soLuongDau = soLuongDau + (Integer.parseInt(s.get(3))>= 5 ? 1:0);
+									}
+									JTable table = new JTable(model){
+								         public boolean editCellAt(int row, int column, java.util.EventObject e) {
+								             return false;
+								          }
+								         
+								         @Override
+								         public Component prepareRenderer(TableCellRenderer renderer, 
+								        		 int row, int column) { Component component = 
+								        		 super.prepareRenderer(renderer, row, column);
+								             int rendererWidth = component.getPreferredSize().width;
+								             TableColumn tableColumn = getColumnModel().getColumn(column);
+								             tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width,
+								            		 tableColumn.getPreferredWidth()));
+								             return component;
+								          }
+									};
+									table.setForeground(Color.WHITE);
+									table.setBackground(new Color(44,62,80));
+									table.setFont(new Font("Times New Roman", Font.BOLD, 18));
+									table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+									table.setFillsViewportHeight(true);
+									JScrollPane scrollPane = new JScrollPane(table);
+									scrollPane.setViewportView(table);
+									tablePanel.add(scrollPane);
+									scrollPane.setBounds(35,5,1100,314);
+							
+									DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+									centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+									int column = table.getColumnModel().getColumnCount();
+									
+									for (int k=0;k<column;k++)
+									{
+										table.getColumnModel().getColumn(k).setCellRenderer(centerRenderer);
+									}
+									
+									final int copySLD = soLuongDau;
+									JButton thongKeButton = new JButton("Thống kê");
+									thongKeButton.addActionListener(new ActionListener() {
+										public void actionPerformed(ActionEvent e) {
+											
+											JOptionPane.showMessageDialog(null, "Có "+copySLD
+													+"/"+tgs.size()+" sinh viên đậu môn này, chiếm tỉ lệ "
+													+ (float)copySLD/(float)tgs.size()*100+"%");
+										}
+									});
+									thongKeButton.setForeground(Color.WHITE);
+									thongKeButton.setFont(new Font("Times New Roman", Font.BOLD, 16));
+									thongKeButton.setBackground(new Color(34, 67, 240));
+									thongKeButton.setBounds(550, 535, 125, 30);
+									diemPanel.add(thongKeButton);
+									
+								}
+								else
+								{
+									JLabel label = new JLabel();
+									
+									tablePanel.add(label);
+									label.setBounds(35,5,1100,314);
+									label.setVerticalAlignment(JLabel.CENTER);
+									label.setHorizontalAlignment(JLabel.CENTER);
+									label.setFont(new Font("Times New Roman", Font.BOLD, 24));
+									label.setForeground(Color.WHITE);
+									JOptionPane.showInternalMessageDialog(null,
+											"Còn sinh viên trong lớp chưa có điểm");
+								}
+							}
+							else {
+								JLabel label = new JLabel("Không có sinh viên trong lớp này");
+								
+								tablePanel.add(label);
+								label.setBounds(35,5,1100,314);
+								label.setVerticalAlignment(JLabel.CENTER);
+								label.setHorizontalAlignment(JLabel.CENTER);
+								label.setFont(new Font("Times New Roman", Font.BOLD, 24));
+								label.setForeground(Color.WHITE);
+							}
+	
+							diemFlag = false;
+						}
+					}
+				});
+				execButton.setForeground(Color.WHITE);
+				execButton.setFont(new Font("Times New Roman", Font.BOLD, 16));
+				execButton.setBackground(new Color(34, 67, 240));
+				execButton.setBounds(536, 132, 139, 30);
+				diemPanel.add(execButton);
+				
+				
 		
 		
 		
@@ -174,7 +427,7 @@ public class GiaovuGUI extends JFrame {
 		});
 		((JLabel) monBox.getRenderer()).setHorizontalAlignment(DefaultListCellRenderer.CENTER);
 		monBox.setForeground(Color.WHITE);
-		monBox.setFont(new Font("Times New Roman", Font.PLAIN, 19));
+		monBox.setFont(new Font("Times New Roman", Font.BOLD, 19));
 		monBox.setBackground(new Color(108, 122, 137));
 		monBox.setBounds(608, 73, 523, 30);
 		dslopPanel.add(monBox);
@@ -219,7 +472,7 @@ public class GiaovuGUI extends JFrame {
 				((JLabel) lopBox.getRenderer()).setHorizontalAlignment(DefaultListCellRenderer.CENTER);
 				lopBox.setForeground(Color.WHITE);
 				lopBox.setBackground(new Color(108,122,137));
-				lopBox.setFont(new Font("Times New Roman", Font.PLAIN, 19));
+				lopBox.setFont(new Font("Times New Roman", Font.BOLD, 19));
 				lopBox.setBounds(138, 73, 292, 30);
 				dslopPanel.add(lopBox);
 				
@@ -351,7 +604,7 @@ public class GiaovuGUI extends JFrame {
 								}
 							}
 							else {
-								JLabel label = new JLabel("Không có sinh viên nào");
+								JLabel label = new JLabel("Không có sinh viên trong lớp này");
 								
 								tablePanel.add(label);
 								label.setBounds(35,5,1100,340);
@@ -422,7 +675,7 @@ public class GiaovuGUI extends JFrame {
 		((JLabel) lopBox.getRenderer()).setHorizontalAlignment(DefaultListCellRenderer.CENTER);
 		lopBox.setForeground(Color.WHITE);
 		lopBox.setBackground(new Color(108,122,137));
-		lopBox.setFont(new Font("Times New Roman", Font.PLAIN, 19));
+		lopBox.setFont(new Font("Times New Roman", Font.BOLD, 19));
 		lopBox.setBounds(355, 24, 462, 30);
 		tkbPanel.add(lopBox);
 		
@@ -543,5 +796,10 @@ public class GiaovuGUI extends JFrame {
 		execButton.setBackground(new Color(34, 67, 240));
 		execButton.setBounds(514, 88, 169, 30);
 		tkbPanel.add(execButton);
+	}
+	
+	public void bangDiem(JPanel diemPanel, Giaovu gv)
+	{
+		
 	}
 }

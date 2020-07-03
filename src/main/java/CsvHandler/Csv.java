@@ -7,7 +7,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -36,11 +38,11 @@ public class Csv {
 			{
 				if (records.get(i).size()<6)
 				{
-					JOptionPane.showMessageDialog(null, "Dòng thứ "+i+" của file thiếu thông tin");
+					JOptionPane.showMessageDialog(null, "Dòng thứ "+(i+1)+" của file thiếu thông tin");
 				}
 				else if (records.get(i).size()>6)
 				{
-					JOptionPane.showMessageDialog(null, "Dòng thứ "+i+" của file thừa thông tin");
+					JOptionPane.showMessageDialog(null, "Dòng thứ "+(i+1)+" của file thừa thông tin");
 				}
 				else if( !s.themSinhVien(records.get(i).get(0).trim(), records.get(i).get(1).trim(), records.get(i).get(2).trim(), 
 						records.get(i).get(3).trim(), records.get(i).get(4).trim(), records.get(i).get(5).trim()))
@@ -82,11 +84,11 @@ public class Csv {
 			{
 				if (records.get(i).size()<4)
 				{
-					JOptionPane.showMessageDialog(null, "Dòng thứ "+i+" của file thiếu thông tin");
+					JOptionPane.showMessageDialog(null, "Dòng thứ "+(i+1)+" của file thiếu thông tin");
 				}
 				else if (records.get(i).size()>4)
 				{
-					JOptionPane.showMessageDialog(null, "Dòng thứ "+i+" của file thừa thông tin");
+					JOptionPane.showMessageDialog(null, "Dòng thứ "+(i+1)+" của file thừa thông tin");
 				}
 				
 				else if(!m.themMon(records.get(i).get(0).trim(), records.get(i).get(1).trim(),
@@ -94,6 +96,57 @@ public class Csv {
 				{
 					JOptionPane.showMessageDialog(null, "Thông tin của môn có mã số "+records.get(i).get(0)
 							+" thuộc lớp "+records.get(i).get(1)+" không hợp lệ!");
+				}
+			}
+			JOptionPane.showMessageDialog(null, "File đã được xử lý xong!");
+		} 
+		
+		catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+	}
+	public static void bangDiem(File f)
+	{
+		ThamgiaDAO tgs = new ThamgiaDAO();
+		
+		
+		List <List<String>> records = new ArrayList<>();
+		try (BufferedReader br = new BufferedReader(new FileReader(f)))
+		{
+			String line;
+			while ((line=br.readLine()) != null)
+			{
+				String[] values = line.split(",");
+				records.add(Arrays.asList(values));
+			}
+			Set<Sinhvien> sv = new HashSet<Sinhvien>();
+			int row = records.size();
+			ThamgiaDAO tg = new ThamgiaDAO();
+			for (int i = 1;i<row;i++)
+			{
+				
+				if (records.get(i).size()<7)
+				{
+					JOptionPane.showMessageDialog(null, "Dòng thứ "+(i+1)+" của file thiếu thông tin");
+				}
+				else if (records.get(i).size()>7)
+				{
+					JOptionPane.showMessageDialog(null, "Dòng thứ "+(i+1)+" của file thừa thông tin");
+				}
+				
+				else 
+				{
+					if (!tg.suaDiem(records.get(i).get(0), records.get(i).get(1), records.get(i).get(2), 
+							records.get(i).get(3), records.get(i).get(4), records.get(i).get(5), 
+							records.get(i).get(6)))
+					{
+						JOptionPane.showMessageDialog(null, "Thông tin ở dòng thứ "+(i+1)+" không hợp lệ");
+					}
+					
 				}
 			}
 			JOptionPane.showMessageDialog(null, "File đã được xử lý xong!");
