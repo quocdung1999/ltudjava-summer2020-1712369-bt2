@@ -23,4 +23,16 @@ public class GiaovuDAO {
 	{
         return gv;
 	}
+	public boolean doiMatKhau(Giaovu gv,String oldPass,String newPass)
+    {
+    	if (gv.getPassword().compareTo(oldPass)!=0)
+    		return false;
+    	if (newPass.length()>50)
+    		return false;
+    	gv.setPassword(newPass);
+    	Transaction tx = session.beginTransaction();
+    	session.update(gv);
+    	tx.commit();
+    	return true;
+    }
 }

@@ -34,6 +34,19 @@ public class SinhvienDAO {
         sv = query.list();
         return sv;
     }
+    
+    public boolean doiMatKhau(Sinhvien s,String oldPass,String newPass)
+    {
+    	if (s.getPassword().compareTo(oldPass)!=0)
+    		return false;
+    	if (newPass.length()>50)
+    		return false;
+    	s.setPassword(newPass);
+    	Transaction tx = session.beginTransaction();
+    	session.update(s);
+    	tx.commit();
+    	return true;
+    }
     public boolean svHopLe(Sinhvien s)
     {
         List <String> gioiTinh = new ArrayList<>();

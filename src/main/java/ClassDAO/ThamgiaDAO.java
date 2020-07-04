@@ -81,7 +81,7 @@ public class ThamgiaDAO {
 	public List<Thamgia> layBangDiem(String maMon,String maLop)
 	{
 		Query query = session.createQuery("from Thamgia tg where tg.mon.maMon = :maMon"
-				+ " and tg.mon.lopHoc.maLop = :maLop");
+				+ " and tg.mon.lopHoc.maLop = :maLop and tg.duyet = true");
 		query.setParameter("maMon", maMon);
 		query.setParameter("maLop", maLop);
 		if (query.list().size()>0)
@@ -96,7 +96,7 @@ public class ThamgiaDAO {
 	public Set<Sinhvien> layDanhSachThamGia(String maMon,String maLop)
 	{
 		Query query = session.createQuery("from Thamgia tg where tg.mon.maMon = :maMon"
-				+ " and tg.mon.lopHoc.maLop = :maLop");
+				+ " and tg.mon.lopHoc.maLop = :maLop and tg.duyet = true");
 		query.setParameter("maMon", maMon);
 		query.setParameter("maLop", maLop);
 		if (query.list().size()>0)
@@ -140,6 +140,87 @@ public class ThamgiaDAO {
 		}
 	}
 	
+	public List<Thamgia> layYeuCau(boolean isKhongHoc)
+	{
+		if (isKhongHoc)
+		{
+			Query query = session.createQuery("from Thamgia tg where tg.khongHoc = true");
+			if (query.list().size()>0)
+			{
+				return query.list();
+			}
+			else {
+				return new ArrayList<Thamgia>();
+			}
+		}
+		Query query = session.createQuery("from Thamgia tg where tg.duyet = false");
+		if (query.list().size()>0)
+		{
+			return query.list();
+		}
+		return new ArrayList<Thamgia>();
+
+	}
+	
+	public void dongYRutMon(Thamgia result)
+	{
+		Transaction tx = session.beginTransaction();
+		session.delete(result);
+		tx.commit();
+	}
+	public void khongDongYRutMon(Thamgia result)
+	{
+		result.setKhongHoc(false);
+		Transaction tx = session.beginTransaction();
+		session.update(result);
+		tx.commit();
+	}
+	
+	public void dongYThamGia(Thamgia result)
+	{
+		result.setDuyet(true);
+		Transaction tx = session.beginTransaction();
+		session.update(result);
+		tx.commit();
+	}
+	
+	public void khongDongYThamGia(Thamgia result)
+	{
+		Transaction tx = session.beginTransaction();
+		session.delete(result);
+		tx.commit();
+	}
+	
+	
+	
+	//Hàm dành cho SinhvienGUI
+	public void yeuCauThamGia(String maLop,String maMon,Sinhvien sv)
+	{
+		Query query = session.createQuery("from Mon m where m.maMon = :maMon and m.lopHoc.maLop = :maLop" );
+		query.setParameter("maMon", maMon);
+		query.setParameter("maLop", maLop);
+		Mon m = (Mon) query.getSingleResult();
+		ThamgiaPK pk = new ThamgiaPK(sv.getMaSV(),m.getIDMon());
+		Thamgia t = new Thamgia();
+		t.setId(pk);
+		t.setSv(sv);
+		t.setMon(m);
+		t.setDuyet(false);
+		t.setKhongHoc(false);
+		Transaction tx = session.beginTransaction();
+		session.save(t);
+		tx.commit();
+	}
+	
+	//Hàm dành cho SinhvienGUI
+	
+	public void yeuCauRutMon(Thamgia result)
+	{
+		result.setKhongHoc(true);
+		Transaction tx = session.beginTransaction();
+		session.update(result);
+		tx.commit();
+	}
 	
 	public boolean suaDiemGK(String maLop,String maMon,String maSV,String diemGK)
 	{
@@ -196,6 +277,8 @@ public class ThamgiaDAO {
 		}
 		return true;
 	}
+	
+	
 	
 	public boolean suaDiemKhac(String maLop,String maMon,String maSV,String diemKhac)
 	{
