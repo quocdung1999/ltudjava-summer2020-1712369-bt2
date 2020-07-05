@@ -50,7 +50,8 @@ public class GiaovuGUI extends JFrame {
 	private boolean diemFlag = true;
 	private boolean diem_lopFlag = false;
 	private boolean diem_monFlag = false;
-	private boolean yeucauFlag = false;
+	private boolean yeucauFlag = true;
+	private boolean yeucau_yeucauFlag = false;	
 	/**
 	 * Create the frame.
 	 */
@@ -101,7 +102,6 @@ public class GiaovuGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 				LoginGUI l = new LoginGUI();
-				l.setVisible(true);
 			}
 		});
 		dangXuatButton.setForeground(Color.WHITE);
@@ -166,165 +166,7 @@ public class GiaovuGUI extends JFrame {
 		tabbedPane.addTab("Duyệt yêu cầu", null, yeucauPanel, null);
 		yeucauPanel.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Loại yêu cầu");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setForeground(Color.WHITE);
-		lblNewLabel.setFont(new Font("Times New Roman", Font.BOLD, 22));
-		lblNewLabel.setBounds(148, 46, 201, 35);
-		yeucauPanel.add(lblNewLabel);
-		
-		
-		JLabel titleLabel = new JLabel("");
-		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		titleLabel.setForeground(Color.WHITE);
-		titleLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
-		titleLabel.setBounds(10, 159, 1180, 37);
-		yeucauPanel.add(titleLabel);
-		
-		JComboBox<String> yeucauBox = new JComboBox<String>();
-		yeucauBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				yeucauFlag = true;
-			}
-		});
-		yeucauBox.setForeground(Color.WHITE);
-		((JLabel) yeucauBox.getRenderer()).setHorizontalAlignment(DefaultListCellRenderer.CENTER);
-		yeucauBox.setFont(new Font("Times New Roman", Font.BOLD, 19));
-		yeucauBox.setBackground(new Color(108, 122, 137));
-		yeucauBox.setBounds(369, 47, 479, 35);
-		yeucauBox.addItem("Xin phép rút môn học");
-		yeucauBox.addItem("Xin phép đăng kí môn học");
-		yeucauPanel.add(yeucauBox);
-		
-		JPanel tablePanel = new JPanel();
-		tablePanel.setLayout(null);
-		tablePanel.setBackground(new Color(44, 62, 80));
-		tablePanel.setBounds(10, 209, 1170, 355);
-		yeucauPanel.add(tablePanel);
-		
-		JButton execButton = new JButton("Xem danh sách yêu cầu");
-		execButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (!yeucauFlag)
-				{
-					JOptionPane.showMessageDialog(null, "Bạn chưa chọn loại yêu cầu!");
-				}
-				else
-				{
-					ThamgiaDAO tgDAO = new ThamgiaDAO();
-					List<Thamgia> tg = tgDAO.layYeuCau(yeucauBox.getSelectedIndex()==0);
-					if (yeucauBox.getSelectedIndex()==0)
-					{
-						titleLabel.setText("DANH SÁCH SINH VIÊN XIN RÚT MÔN HỌC");
-					}
-					else
-					{
-						titleLabel.setText("DANH SÁCH SINH VIÊN XIN ĐĂNG KÍ MÔN HỌC");
-					}
-					if (tg.size()>0)
-					{
-						DefaultTableModel model = new DefaultTableModel();
-						model.addColumn("STT");model.addColumn("MSSV");model.addColumn("Họ và tên");
-						model.addColumn("Lớp");model.addColumn("Mã môn");model.addColumn("");model.addColumn("");
-						int i = 1;
-						for (Thamgia t :tg)
-						{
-							JButton accept = new JButton("Đồng ý");
-							accept.setForeground(Color.WHITE);
-							accept.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-							accept.setBackground(new Color(34,67,240));
-							accept.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent e) {
-									if (yeucauBox.getSelectedIndex()==0)
-									{
-										tgDAO.dongYRutMon(t);
-									}
-									else
-									{
-										tgDAO.dongYThamGia(t);
-									}
-								}
-							});
-							JButton decline = new JButton("Không đồng ý");
-							decline.setForeground(Color.WHITE);
-							decline.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-							decline.setBackground(new Color(34,67,240));
-							decline.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent e) {
-									if (yeucauBox.getSelectedIndex()==0)
-									{
-										tgDAO.khongDongYRutMon(t);
-									}
-									else
-									{
-										tgDAO.khongDongYThamGia(t);
-									}
-								}
-							});
-							
-							
-							model.addRow(new Object[] {i,t.getSv().getMaSV(),t.getSv().getHoTen(),
-									t.getMon().getLopHoc().getMaLop(),t.getMon().getMaMon(),accept,decline});
-							
-							i++;
-						}
-						//Table
-						JTable table = new JTable(model){
-					         public boolean editCellAt(int row, int column, java.util.EventObject e) {
-					             return false;
-					          }
-					         
-			         @Override
-			         public Component prepareRenderer(TableCellRenderer renderer, 
-			        		 int row, int column) { Component component = 
-			        		 super.prepareRenderer(renderer, row, column);
-			             int rendererWidth = component.getPreferredSize().width;
-			             TableColumn tableColumn = getColumnModel().getColumn(column);
-			             tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width,
-			            		 tableColumn.getPreferredWidth()));
-			             return component;
-			          }
-						};
-						table.setForeground(Color.WHITE);
-						table.setBackground(new Color(44,62,80));
-						table.setFont(new Font("Times New Roman", Font.BOLD, 18));
-						table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-						table.setFillsViewportHeight(true);
-						JScrollPane scrollPane = new JScrollPane(table);
-						scrollPane.setViewportView(table);
-						tablePanel.add(scrollPane);
-						scrollPane.setBounds(35,5,1100,350);
-				
-						DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-						centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-						int column = table.getColumnModel().getColumnCount();
-						
-						for (int k=0;k<column;k++)
-						{
-							table.getColumnModel().getColumn(k).setCellRenderer(centerRenderer);
-						}
-						
-					}
-					else
-					{
-						JLabel label = new JLabel("Không có yêu cầu nào");						
-						tablePanel.add(label);
-						label.setBounds(35,5,1100,350);
-						label.setVerticalAlignment(JLabel.CENTER);
-						label.setHorizontalAlignment(JLabel.CENTER);
-						label.setFont(new Font("Times New Roman", Font.BOLD, 24));
-						label.setForeground(Color.WHITE);
-					}
-				}
-			}
-		});
-		execButton.setForeground(Color.WHITE);
-		execButton.setFont(new Font("Times New Roman", Font.BOLD, 18));
-		execButton.setBackground(new Color(34, 67, 240));
-		execButton.setBounds(501, 118, 219, 30);
-		yeucauPanel.add(execButton);
-		
-		
+		yeuCau(yeucauPanel, gv);
 		
 		
 		
@@ -375,7 +217,7 @@ public class GiaovuGUI extends JFrame {
 		
 		JPanel tablePanel = new JPanel();
 		tablePanel.setBackground(new Color(44,62,80));
-		tablePanel.setBounds(10, 210, 1170, 350);
+		tablePanel.setBounds(15, 210, 1170, 350);
 		dslopPanel.add(tablePanel);
 		tablePanel.setLayout(null);
 		
@@ -999,7 +841,8 @@ public class GiaovuGUI extends JFrame {
 											
 											JOptionPane.showMessageDialog(null, "Có "+copySLD
 													+"/"+tgs.size()+" sinh viên đậu môn này, chiếm tỉ lệ "
-													+ (float)copySLD/(float)tgs.size()*100+"%");
+										+ new BigDecimal(copySLD).setScale(2, RoundingMode.HALF_UP).
+										divide(new BigDecimal(tgs.size())).multiply(new BigDecimal(100))+"%");
 										}
 									});
 									thongKeButton.setForeground(Color.WHITE);
@@ -1143,5 +986,174 @@ public class GiaovuGUI extends JFrame {
 				execButton.setBackground(new Color(34, 67, 240));
 				execButton.setBounds(536, 132, 139, 30);
 				diemPanel.add(execButton);
+	}
+	
+	
+	public void yeuCau(JPanel yeucauPanel,Giaovu gv)
+	{
+		JLabel lblNewLabel = new JLabel("Loại yêu cầu");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setForeground(Color.WHITE);
+		lblNewLabel.setFont(new Font("Times New Roman", Font.BOLD, 22));
+		lblNewLabel.setBounds(148, 46, 201, 35);
+		yeucauPanel.add(lblNewLabel);
+		
+		
+		JLabel titleLabel = new JLabel("");
+		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		titleLabel.setForeground(Color.WHITE);
+		titleLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
+		titleLabel.setBounds(10, 159, 1180, 37);
+		yeucauPanel.add(titleLabel);
+		
+		JComboBox<String> yeucauBox = new JComboBox<String>();
+		yeucauBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				yeucau_yeucauFlag = true;
+			}
+		});
+		yeucauBox.setForeground(Color.WHITE);
+		((JLabel) yeucauBox.getRenderer()).setHorizontalAlignment(DefaultListCellRenderer.CENTER);
+		yeucauBox.setFont(new Font("Times New Roman", Font.BOLD, 19));
+		yeucauBox.setBackground(new Color(108, 122, 137));
+		yeucauBox.setBounds(369, 47, 479, 35);
+		yeucauBox.addItem("Xin phép rút môn học");
+		yeucauBox.addItem("Xin phép đăng kí môn học");
+		yeucauPanel.add(yeucauBox);
+		
+		JPanel tablePanel = new JPanel();
+		tablePanel.setLayout(null);
+		tablePanel.setBackground(new Color(44, 62, 80));
+		tablePanel.setBounds(10, 209, 1170, 355);
+		yeucauPanel.add(tablePanel);
+		
+		JButton execButton = new JButton("Xem danh sách yêu cầu");
+		execButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (!yeucau_yeucauFlag)
+				{
+					JOptionPane.showMessageDialog(null, "Bạn chưa chọn loại yêu cầu!");
+				}
+				else
+				{
+					if (!yeucauFlag)
+					{
+						tablePanel.removeAll();
+						tablePanel.setLayout(null);
+					}
+					ThamgiaDAO tgDAO = new ThamgiaDAO();
+					List<Thamgia> tg = tgDAO.layYeuCau(yeucauBox.getSelectedIndex()==0);
+					if (yeucauBox.getSelectedIndex()==0)
+					{
+						titleLabel.setText("DANH SÁCH SINH VIÊN XIN RÚT MÔN HỌC");
+					}
+					else
+					{
+						titleLabel.setText("DANH SÁCH SINH VIÊN XIN ĐĂNG KÍ MÔN HỌC");
+					}
+					if (tg.size()>0)
+					{
+						DefaultTableModel model = new DefaultTableModel();
+						model.addColumn("STT");model.addColumn("MSSV");model.addColumn("Họ và tên");
+						model.addColumn("Lớp");model.addColumn("Mã môn");model.addColumn("");model.addColumn("");
+						int i = 1;
+						for (Thamgia t :tg)
+						{
+								
+							model.addRow(new Object[] {i,t.getSv().getMaSV(),t.getSv().getHoTen(),
+									t.getMon().getLopHoc().getMaLop(),t.getMon().getMaMon(),"Đồng ý",
+									"Không đồng ý"});
+							i++;
+						}
+						//Table
+						JTable table = new JTable(model){
+					         public boolean editCellAt(int row, int column, java.util.EventObject e) {
+					             return false;
+					          }
+					         
+			         @Override
+			         public Component prepareRenderer(TableCellRenderer renderer, 
+			        		 int row, int column) { Component component = 
+			        		 super.prepareRenderer(renderer, row, column);
+			             int rendererWidth = component.getPreferredSize().width;
+			             TableColumn tableColumn = getColumnModel().getColumn(column);
+			             tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width,
+			            		 tableColumn.getPreferredWidth()));
+			             return component;
+			          }
+						};
+						table.addMouseListener(new java.awt.event.MouseAdapter() {
+							@Override
+							 public void mouseClicked(java.awt.event.MouseEvent evt) {
+							    int row = table.rowAtPoint(evt.getPoint());
+							    int col = table.columnAtPoint(evt.getPoint());
+							    if (row >= 0 && (col == 5||col == 6)) {
+							    	if (col==5)
+							    	{
+							    		if (yeucauBox.getSelectedIndex()==0)
+							    		{
+							    			tgDAO.dongYRutMon(tg.get(row));
+							    		}
+							    		else
+							    		{
+							    			tgDAO.dongYThamGia(tg.get(row));
+							    		}
+							    	}
+							    	else
+							    	{
+							    		if (yeucauBox.getSelectedIndex()==0)
+										{
+											tgDAO.khongDongYRutMon(tg.get(row));
+										}
+										else
+										{
+											tgDAO.khongDongYThamGia(tg.get(row));
+										}
+							    	}
+							    	model.removeRow(row);
+							    }
+							 }
+							});
+						table.setForeground(Color.WHITE);
+						table.setBackground(new Color(44,62,80));
+						table.setFont(new Font("Times New Roman", Font.BOLD, 18));
+						table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+						table.setFillsViewportHeight(true);
+						JScrollPane scrollPane = new JScrollPane(table);
+						scrollPane.setViewportView(table);
+						tablePanel.add(scrollPane);
+						scrollPane.setBounds(35,5,1100,350);
+				
+						DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+						centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+						int column = table.getColumnModel().getColumnCount();
+						
+						for (int k=0;k<column;k++)
+						{
+							table.getColumnModel().getColumn(k).setCellRenderer(centerRenderer);
+						}
+						
+					}
+					else
+					{
+						JLabel label = new JLabel("Không có yêu cầu nào");						
+						tablePanel.add(label);
+						label.setBounds(35,5,1100,350);
+						label.setVerticalAlignment(JLabel.CENTER);
+						label.setHorizontalAlignment(JLabel.CENTER);
+						label.setFont(new Font("Times New Roman", Font.BOLD, 24));
+						label.setForeground(Color.WHITE);
+					}
+					yeucauFlag = false;
+				}
+			}
+		});
+		execButton.setForeground(Color.WHITE);
+		execButton.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		execButton.setBackground(new Color(34, 67, 240));
+		execButton.setBounds(501, 118, 219, 30);
+		yeucauPanel.add(execButton);
+		
+		
 	}
 }

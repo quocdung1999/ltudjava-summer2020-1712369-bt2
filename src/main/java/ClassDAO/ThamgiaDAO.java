@@ -93,6 +93,7 @@ public class ThamgiaDAO {
 			return new ArrayList<Thamgia>();
 	}
 	
+	
 	public Set<Sinhvien> layDanhSachThamGia(String maMon,String maLop)
 	{
 		Query query = session.createQuery("from Thamgia tg where tg.mon.maMon = :maMon"
@@ -137,6 +138,19 @@ public class ThamgiaDAO {
 			Transaction tx = session.beginTransaction();
 			session.save(tg);
 			tx.commit();
+		}
+	}
+	
+	public List<Thamgia> layMonThamGia(String maSV)
+	{
+		Query query = session.createQuery("from Thamgia tg where tg.sv.maSV = :maSV and tg.duyet = true");
+		query.setParameter("maSV", maSV);
+		if (query.list().size()>0)
+		{
+			return query.list();
+		}
+		else {
+			return new ArrayList<Thamgia>();
 		}
 	}
 	
@@ -190,7 +204,6 @@ public class ThamgiaDAO {
 		session.delete(result);
 		tx.commit();
 	}
-	
 	
 	
 	//Hàm dành cho SinhvienGUI

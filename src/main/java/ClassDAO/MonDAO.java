@@ -73,4 +73,34 @@ public class MonDAO {
 		}
 	}
 	
+	
+	//Hàm dành cho SinhvienGUI
+	
+	public List<Mon> layMonKhongThamGia(Sinhvien s)
+	{
+		boolean flag = true;
+		String maSV = s.getMaSV();
+		Query query = session.createQuery("from Mon ");
+		List<Mon> mons = query.list();
+		Query query2 = session.createQuery("from Thamgia t where t.sv.maSV = :maSV");
+		query2.setParameter("maSV", maSV);
+		List<Thamgia> tg = query2.list();
+		List<Mon> result = new ArrayList<Mon>();
+		for (Mon mon:mons)
+		{
+			
+			flag = true;
+			for (Thamgia t:tg)
+			{
+				if (mon.getIDMon() == t.getId().getIDMon() && t.getId().getMaSV().compareTo(maSV)==0)
+				{
+					flag = false;
+					break;
+				}
+			}
+			if (flag)
+				result.add(mon);
+		}
+		return result;
+	}
 }

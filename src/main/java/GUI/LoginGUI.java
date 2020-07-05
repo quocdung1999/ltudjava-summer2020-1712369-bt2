@@ -42,6 +42,7 @@ public class LoginGUI extends JFrame {
 		setBounds(100, 100, 650, 454);
 		setTitle("Quản lý sinh viên");
 		setLocationRelativeTo(null);
+		setVisible(true);
 		
 		JPanel middlePanel = new JPanel();
 		middlePanel.setBounds(55, 140, 540, 150);

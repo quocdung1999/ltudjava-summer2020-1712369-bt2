@@ -137,6 +137,7 @@ public class doiMatKhauGUI extends JFrame implements FocusListener {
 							else
 							{
 								JOptionPane.showMessageDialog(null, "Đổi mật khẩu thành công!");
+								dispose();
 							}
 						}
 						else
